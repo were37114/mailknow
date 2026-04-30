@@ -1,0 +1,121 @@
+/* AttachmentPreview styles */
+
+.attachment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attachment-preview {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #fff;
+}
+
+.attachment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attachment-icon {
+  font-size: 24px;
+}
+
+.attachment-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.attachment-filename {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #212121;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachment-meta {
+  font-size: 12px;
+  color: #999;
+}
+
+.attachment-summary {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: #e3f2fd;
+  border-radius: 6px;
+}
+
+.summary-label {
+  font-size: 11px;
+  color: #1565c0;
+  font-weight: 600;
+}
+
+.summary-text {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.attachment-content {
+  margin-top: 8px;
+}
+
+.attachment-content summary {
+  font-size: 12px;
+  color: #1976d2;
+  cursor: pointer;
+}
+
+.content-text {
+  margin: 6px 0 0;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.content-truncated {
+  font-size: 11px;
+  color: #999;
+  display: block;
+  text-align: center;
+  padding: 4px;
+}
+
+.attachment-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-preview,
+.btn-download {
+  padding: 3px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.btn-preview:hover { background: #e3f2fd; }
+.btn-download:hover { background: #e8f5e9; }
+
+.attachments-empty {
+  text-align: center;
+  padding: 16px;
+  color: #999;
+  font-size: 13px;
+}

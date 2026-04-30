@@ -1,0 +1,121 @@
+{
+  "version": "1.0.0",
+  "description": "Gate 5级分流规则库",
+  "rules": {
+    "urgent": {
+      "description": "G0: 紧急邮件 - 需要立即处理",
+      "priority": 5,
+      "conditions": [
+        {
+          "type": "subject_keywords",
+          "keywords": ["紧急", "urgent", "immediate", "asap", "立即", "马上", "加急"],
+          "weight": 0.9
+        },
+        {
+          "type": "subject_pattern",
+          "pattern": "\\[urgent\\]|【紧急】",
+          "weight": 0.95
+        },
+        {
+          "type": "from_domains",
+          "domains": ["ceo", "boss", "manager"],
+          "weight": 0.7
+        },
+        {
+          "type": "flags",
+          "flags": ["\\Flagged"],
+          "weight": 0.8
+        }
+      ],
+      "threshold": 0.7
+    },
+    "spam": {
+      "description": "G4: 垃圾邮件",
+      "priority": 4,
+      "conditions": [
+        {
+          "type": "subject_keywords",
+          "keywords": ["中奖", "优惠", "促销", "贷款", "信用卡", "代开", "发票", "免费", "领取"],
+          "weight": 0.8
+        },
+        {
+          "type": "from_patterns",
+          "patterns": ["noreply@", "no-reply@", "donotreply@"],
+          "weight": 0.3
+        },
+        {
+          "type": "subject_pattern",
+          "pattern": "\\[广告\\]|【广告】|AD:",
+          "weight": 0.95
+        },
+        {
+          "type": "content_keywords",
+          "keywords": ["退订", "取消订阅", "unsubscribe"],
+          "weight": 0.6
+        }
+      ],
+      "threshold": 0.6
+    },
+    "notification": {
+      "description": "G3: 通知邮件 - 系统通知、订阅、已完成",
+      "priority": 3,
+      "conditions": [
+        {
+          "type": "subject_keywords",
+          "keywords": ["通知", "提醒", "已发送", "已完成", "确认", "验证码", "notification", "alert", "confirm"],
+          "weight": 0.7
+        },
+        {
+          "type": "from_patterns",
+          "patterns": ["notification@", "alert@", "noreply@", "no-reply@"],
+          "weight": 0.8
+        },
+        {
+          "type": "subject_pattern",
+          "pattern": "\\[通知\\]|【通知】|\\[提醒\\]|【提醒】",
+          "weight": 0.9
+        },
+        {
+          "type": "auto_reply",
+          "weight": 0.95
+        }
+      ],
+      "threshold": 0.5
+    },
+    "important": {
+      "description": "G1: 重要邮件 - 需要关注",
+      "priority": 1,
+      "conditions": [
+        {
+          "type": "subject_keywords",
+          "keywords": ["重要", "important", "审批", "approve", "合同", "contract", "报价", "quote"],
+          "weight": 0.8
+        },
+        {
+          "type": "to_me",
+          "weight": 0.4
+        },
+        {
+          "type": "subject_pattern",
+          "pattern": "\\[重要\\]|【重要】|\\[审批\\]|【审批】",
+          "weight": 0.9
+        },
+        {
+          "type": "has_attachments",
+          "weight": 0.3
+        }
+      ],
+      "threshold": 0.5
+    },
+    "routine": {
+      "description": "G2: 常规邮件 - 默认分类",
+      "priority": 2,
+      "conditions": [],
+      "threshold": 0.0
+    }
+  },
+  "conflict_resolution": {
+    "description": "冲突优先级：G0 > G4 > G3 > G2 > G1",
+    "priority_order": ["urgent", "spam", "notification", "routine", "important"]
+  }
+}

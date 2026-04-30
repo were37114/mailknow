@@ -1,0 +1,153 @@
+[
+  {
+    "id": "border_cc_approval",
+    "description": "CC审批 - 低置信度，抄送中包含审批请求",
+    "email": {
+      "subject": "FYI: 张三的合同审批请求",
+      "from_addr": "pm@company.com",
+      "to_addrs": ["finance@company.com"],
+      "cc_addrs": ["user@company.com"],
+      "content": "请财务部门审批此合同，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "border_completed_notification",
+    "description": "已完成审批通知 - Gate1但不是审批请求",
+    "email": {
+      "subject": "【重要】合同审批已通过",
+      "from_addr": "system@company.com",
+      "to_addrs": ["user@company.com"],
+      "cc_addrs": [],
+      "content": "您提交的合同审批已通过，请查看附件"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "border_system_forward",
+    "description": "系统转发审批 - OA系统自动转发",
+    "email": {
+      "subject": "【系统转发】采购审批单 #12345",
+      "from_addr": "oa@company.com",
+      "to_addrs": ["user@company.com"],
+      "cc_addrs": [],
+      "content": "系统转发：请审批采购申请单#12345，金额￥5000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "border_confirmation_not_approval",
+    "description": "确认邮件但非审批 - 会议确认",
+    "email": {
+      "subject": "确认明天会议时间",
+      "from_addr": "colleague@company.com",
+      "to_addrs": ["user@company.com"],
+      "cc_addrs": [],
+      "content": "确认明天的会议时间改为下午3点"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "none"
+    }
+  },
+  {
+    "id": "border_english_approval",
+    "description": "英文审批邮件",
+    "email": {
+      "subject": "Please approve the budget request",
+      "from_addr": "manager@company.com",
+      "to_addrs": ["user@company.com"],
+      "cc_addrs": [],
+      "content": "Hi, please review and approve the Q2 budget request attached."
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "border_mass_cc_approval",
+    "description": "群发CC审批 - 大量收件人抄送",
+    "email": {
+      "subject": "审批通知：年度预算方案",
+      "from_addr": "cfo@company.com",
+      "to_addrs": ["board@company.com"],
+      "cc_addrs": ["user@company.com", "team@company.com", "all@company.com"],
+      "content": "年度预算方案已提交审批，请知会"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "border_urgent_approval",
+    "description": "紧急审批邮件",
+    "email": {
+      "subject": "【紧急】请立即审批服务器采购",
+      "from_addr": "cto@company.com",
+      "to_addrs": ["user@company.com"],
+      "cc_addrs": [],
+      "content": "服务器即将到期，请紧急审批采购申请"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "border_rejection_notification",
+    "description": "审批拒绝通知",
+    "email": {
+      "subject": "审批未通过：差旅申请",
+      "from_addr": "system@company.com",
+      "to_addrs": ["user@company.com"],
+      "cc_addrs": [],
+      "content": "您的差旅申请审批未通过，原因：超出预算"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "border_approval_with_discussion",
+    "description": "讨论中隐含审批请求",
+    "email": {
+      "subject": "关于新项目方案的讨论",
+      "from_addr": "pm@company.com",
+      "to_addrs": ["user@company.com"],
+      "cc_addrs": [],
+      "content": "新项目方案已整理完成，是否可以开始执行？请审核确认"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "border_pure_discussion",
+    "description": "纯讨论邮件不含审批",
+    "email": {
+      "subject": "关于技术方案的讨论",
+      "from_addr": "dev@company.com",
+      "to_addrs": ["user@company.com"],
+      "cc_addrs": [],
+      "content": "我觉得方案A更好，大家觉得呢？"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "none"
+    }
+  }
+]

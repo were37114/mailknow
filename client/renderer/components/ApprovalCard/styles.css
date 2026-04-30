@@ -1,0 +1,407 @@
+/* ApprovalCard styles */
+
+.approval-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+.approval-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.approval-card.processed {
+  opacity: 0.6;
+  background: #f9f9f9;
+}
+
+.approval-card.high {
+  border-left: 4px solid #4caf50;
+}
+
+.approval-card.medium {
+  border-left: 4px solid #ff9800;
+}
+
+.approval-card.low {
+  border-left: 4px solid #f44336;
+}
+
+.card-header {
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-subject {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.card-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.card-badges {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Confidence badges */
+.confidence-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.confidence-high {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.confidence-medium {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.confidence-low {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* Amount badges */
+.amount-badge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.amount-small {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.amount-medium {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.amount-large {
+  background: #fce4ec;
+  color: #c62828;
+  font-weight: 700;
+}
+
+/* Status badges */
+.status-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.status-approved { background: #e8f5e9; color: #2e7d32; }
+.status-rejected { background: #ffebee; color: #c62828; }
+.status-forwarded { background: #e3f2fd; color: #1565c0; }
+.status-delegated { background: #f3e5f5; color: #6a1b9a; }
+.status-deferred { background: #fff3e0; color: #e65100; }
+.status-expired { background: #f5f5f5; color: #757575; }
+
+/* Card details */
+.card-details {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.card-reason {
+  font-size: 12px;
+  color: #666;
+  margin: 0 0 8px;
+}
+
+.card-comment,
+.card-forward {
+  margin-bottom: 8px;
+}
+
+.comment-input,
+.forward-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+}
+
+.comment-input:focus,
+.forward-input:focus {
+  border-color: #1976d2;
+}
+
+/* Action buttons */
+.card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-approve,
+.btn-confirm {
+  padding: 4px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #4caf50;
+  color: white;
+}
+
+.btn-approve:hover,
+.btn-confirm:hover {
+  background: #388e3c;
+}
+
+.btn-reject {
+  padding: 4px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #f44336;
+  color: white;
+}
+
+.btn-reject:hover {
+  background: #d32f2f;
+}
+
+.btn-forward {
+  padding: 4px 16px;
+  border: 1px solid #1976d2;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  background: transparent;
+  color: #1976d2;
+}
+
+.btn-forward:hover {
+  background: #e3f2fd;
+}
+
+.btn-forward-confirm {
+  padding: 4px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #1976d2;
+  color: white;
+}
+
+.btn-cancel {
+  padding: 4px 16px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  background: transparent;
+  color: #666;
+}
+
+/* Large amount confirmation */
+.confirm-large {
+  background: #fff3e0;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.confirm-large p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #e65100;
+  font-weight: 600;
+}
+
+/* Expand button */
+.btn-expand {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 0;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-expand:hover {
+  color: #666;
+}
+
+/* Batch approval bar */
+.batch-approval-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: #e3f2fd;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.batch-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1565c0;
+}
+
+.batch-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-batch-approve {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  background: #4caf50;
+  color: white;
+}
+
+.btn-batch-reject {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  background: #f44336;
+  color: white;
+}
+
+.batch-options {
+  display: flex;
+  align-items: center;
+}
+
+.skip-large-toggle {
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.batch-select {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.btn-select-all,
+.btn-deselect-all {
+  background: none;
+  border: 1px solid #1976d2;
+  color: #1976d2;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Approval list */
+.approval-list {
+  padding: 16px;
+}
+
+.approval-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.filter-label {
+  font-size: 13px;
+  color: #666;
+}
+
+.filter-btn {
+  padding: 2px 10px;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-btn.active {
+  background: #1976d2;
+  color: white;
+  border-color: #1976d2;
+}
+
+.pending-count {
+  margin-left: auto;
+  font-size: 13px;
+  color: #666;
+}
+
+.approval-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.approval-card-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.card-checkbox {
+  margin-top: 12px;
+  width: 16px;
+  height: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px;
+  color: #999;
+}
+
+/* Button disabled states */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
