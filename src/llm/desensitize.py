@@ -114,11 +114,13 @@ class DesensitizeEngine:
                 replacement=r'\1****\4\5****',
                 description="身份证脱敏",
             ),
-            # 4. Amounts (¥/$ followed by numbers)
+            # 4. Amounts (¥/$ followed by numbers, or Chinese amounts)
             DesensitizeRule(
                 type=SensitiveType.AMOUNT,
                 pattern=re.compile(
-                    r'[¥￥$]\s*[\d,]+\.?\d*|\d{1,3}(,\d{3})+\.?\d*\s*(元|万|块|美元|美金)'
+                    r'[¥￥$]\s*[\d,]+\.?\d*|'  # ¥50000, $100
+                    r'\d{1,3}(,\d{3})+\.?\d*\s*(元|块|美元|美金)|'  # 50,000元
+                    r'\d+(\.\d+)?\s*(万|万元|亿|亿元)|(金额|合同金额|预算|报价)[:：]?\s*\d+(\.\d+)?\s*(万|万元|亿|亿元|元)'  # 150万, 合同金额800万元
                 ),
                 replacement='[金额]',
                 description="金额脱敏",

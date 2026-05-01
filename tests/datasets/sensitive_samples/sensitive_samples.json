@@ -1,0 +1,452 @@
+[
+  {
+    "id": "c98694c7e7c9d58e",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "张三",
+    "expected_masked": "***",
+    "subject": "项目进度更新",
+    "content": "主题：项目进度更新\n发件人：张经理\n收件人：张三\n日期：2026-05-01\n\n张三，你好：\n\n关于项目进度更新事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "590a338251b1f94a",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "李四",
+    "expected_masked": "***",
+    "subject": "会议邀请",
+    "content": "主题：会议邀请\n发件人：张经理\n收件人：李四\n日期：2026-05-02\n\n李四，你好：\n\n关于会议邀请事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "7401070e7be12d6d",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "王五",
+    "expected_masked": "***",
+    "subject": "合同审核",
+    "content": "主题：合同审核\n发件人：张经理\n收件人：王五\n日期：2026-05-03\n\n王五，你好：\n\n关于合同审核事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "6d7352ef184fa794",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "赵六",
+    "expected_masked": "***",
+    "subject": "报销申请",
+    "content": "主题：报销申请\n发件人：张经理\n收件人：赵六\n日期：2026-05-04\n\n赵六，你好：\n\n关于报销申请事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "5bb5159359ca2998",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "钱七",
+    "expected_masked": "***",
+    "subject": "出差报告",
+    "content": "主题：出差报告\n发件人：张经理\n收件人：钱七\n日期：2026-05-05\n\n钱七，你好：\n\n关于出差报告事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "f96456205bfef2ec",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "孙八",
+    "expected_masked": "***",
+    "subject": "工作汇报",
+    "content": "主题：工作汇报\n发件人：张经理\n收件人：孙八\n日期：2026-05-06\n\n孙八，你好：\n\n关于工作汇报事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "13b8ae19968132b3",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "周九",
+    "expected_masked": "***",
+    "subject": "客户沟通",
+    "content": "主题：客户沟通\n发件人：张经理\n收件人：周九\n日期：2026-05-07\n\n周九，你好：\n\n关于客户沟通事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "e0c7e0a54ccb8172",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "吴十",
+    "expected_masked": "***",
+    "subject": "产品反馈",
+    "content": "主题：产品反馈\n发件人：张经理\n收件人：吴十\n日期：2026-05-08\n\n吴十，你好：\n\n关于产品反馈事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "86c655db09af151c",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "郑十一",
+    "expected_masked": "***",
+    "subject": "技术方案",
+    "content": "主题：技术方案\n发件人：张经理\n收件人：郑十一\n日期：2026-05-09\n\n郑十一，你好：\n\n关于技术方案事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "0695bff6f5c3dac6",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "王小明",
+    "expected_masked": "***",
+    "subject": "团队建设",
+    "content": "主题：团队建设\n发件人：张经理\n收件人：王小明\n日期：2026-05-10\n\n王小明，你好：\n\n关于团队建设事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "9696c1fd6e666c06",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "李小红",
+    "expected_masked": "***",
+    "subject": "预算审批",
+    "content": "主题：预算审批\n发件人：张经理\n收件人：李小红\n日期：2026-05-11\n\n李小红，你好：\n\n关于预算审批事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "41637189f7003763",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "张伟",
+    "expected_masked": "***",
+    "subject": "招聘通知",
+    "content": "主题：招聘通知\n发件人：张经理\n收件人：张伟\n日期：2026-05-12\n\n张伟，你好：\n\n关于招聘通知事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "1ac7035bd76aad5b",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "刘洋",
+    "expected_masked": "***",
+    "subject": "培训安排",
+    "content": "主题：培训安排\n发件人：张经理\n收件人：刘洋\n日期：2026-05-13\n\n刘洋，你好：\n\n关于培训安排事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "0c1f5402d9bd7ba4",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "陈静",
+    "expected_masked": "***",
+    "subject": "绩效考核",
+    "content": "主题：绩效考核\n发件人：张经理\n收件人：陈静\n日期：2026-05-14\n\n陈静，你好：\n\n关于绩效考核事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "f6c7ddfce2f149f8",
+    "type": "person_name",
+    "sensitive_field": "recipient_name",
+    "original_value": "杨帆",
+    "expected_masked": "***",
+    "subject": "项目总结",
+    "content": "主题：项目总结\n发件人：张经理\n收件人：杨帆\n日期：2026-05-15\n\n杨帆，你好：\n\n关于项目总结事宜，请你在本周五前完成相关准备工作。\n\n如有问题，请及时与我联系。\n\n此致\n张经理\n"
+  },
+  {
+    "id": "ed8573a19491ef2b",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "13812345678",
+    "expected_masked": "****5678",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-01\n\n客户联系电话登记如下：\n\n客户姓名：客户1\n联系电话：13812345678\n联系邮箱：customer1@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "c8399b1f2c469c1c",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "15987654321",
+    "expected_masked": "****4321",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-02\n\n客户联系电话登记如下：\n\n客户姓名：客户2\n联系电话：15987654321\n联系邮箱：customer2@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "db4f9eb373320b00",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "18611223344",
+    "expected_masked": "****3344",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-03\n\n客户联系电话登记如下：\n\n客户姓名：客户3\n联系电话：18611223344\n联系邮箱：customer3@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "857f21ace9197707",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "13599887766",
+    "expected_masked": "****7766",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-04\n\n客户联系电话登记如下：\n\n客户姓名：客户4\n联系电话：13599887766\n联系邮箱：customer4@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "b91435b06a2fcc0e",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "15011223344",
+    "expected_masked": "****3344",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-05\n\n客户联系电话登记如下：\n\n客户姓名：客户5\n联系电话：15011223344\n联系邮箱：customer5@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "23b8c6f9443e3acb",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "13877889900",
+    "expected_masked": "****9900",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-06\n\n客户联系电话登记如下：\n\n客户姓名：客户6\n联系电话：13877889900\n联系邮箱：customer6@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "d65d7a6d2b86930e",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "18866778899",
+    "expected_masked": "****8899",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-07\n\n客户联系电话登记如下：\n\n客户姓名：客户7\n联系电话：18866778899\n联系邮箱：customer7@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "5d0680aba4248adc",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "13699887766",
+    "expected_masked": "****7766",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-08\n\n客户联系电话登记如下：\n\n客户姓名：客户8\n联系电话：13699887766\n联系邮箱：customer8@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "556d59cb11190413",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "15811223344",
+    "expected_masked": "****3344",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-09\n\n客户联系电话登记如下：\n\n客户姓名：客户9\n联系电话：15811223344\n联系邮箱：customer9@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "c68936200f5575c8",
+    "type": "phone_number",
+    "sensitive_field": "phone",
+    "original_value": "18766778899",
+    "expected_masked": "****8899",
+    "subject": "客户信息登记",
+    "content": "主题：客户信息登记\n发件人：客服部\n收件人：业务组\n日期：2026-05-10\n\n客户联系电话登记如下：\n\n客户姓名：客户10\n联系电话：18766778899\n联系邮箱：customer10@example.com\n\n请尽快跟进。\n"
+  },
+  {
+    "id": "49524a063a81b8b4",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "zhangsan@company.com",
+    "expected_masked": "z***@company.com",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-01\n\n合作伙伴信息更新：\n\n公司：合作公司1\n联系人邮箱：zhangsan@company.com\n合作项目：项目1\n\n请尽快对接。\n"
+  },
+  {
+    "id": "9ada0e9820102577",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "lisi@corp.cn",
+    "expected_masked": "l***@corp.cn",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-02\n\n合作伙伴信息更新：\n\n公司：合作公司2\n联系人邮箱：lisi@corp.cn\n合作项目：项目2\n\n请尽快对接。\n"
+  },
+  {
+    "id": "b2d2618a6e7b1c05",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "wangwu@test.org",
+    "expected_masked": "w***@test.org",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-03\n\n合作伙伴信息更新：\n\n公司：合作公司3\n联系人邮箱：wangwu@test.org\n合作项目：项目3\n\n请尽快对接。\n"
+  },
+  {
+    "id": "09f0d578a30004a5",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "zhaoliu@mail.com",
+    "expected_masked": "z***@mail.com",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-04\n\n合作伙伴信息更新：\n\n公司：合作公司4\n联系人邮箱：zhaoliu@mail.com\n合作项目：项目4\n\n请尽快对接。\n"
+  },
+  {
+    "id": "b51969180c90d12a",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "qianqi@work.cn",
+    "expected_masked": "q***@work.cn",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-05\n\n合作伙伴信息更新：\n\n公司：合作公司5\n联系人邮箱：qianqi@work.cn\n合作项目：项目5\n\n请尽快对接。\n"
+  },
+  {
+    "id": "0fcae632dc722e06",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "sunba@office.com",
+    "expected_masked": "s***@office.com",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-06\n\n合作伙伴信息更新：\n\n公司：合作公司6\n联系人邮箱：sunba@office.com\n合作项目：项目6\n\n请尽快对接。\n"
+  },
+  {
+    "id": "0419fd3bc6b5da06",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "zhoujiu@firm.cn",
+    "expected_masked": "z***@firm.cn",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-07\n\n合作伙伴信息更新：\n\n公司：合作公司7\n联系人邮箱：zhoujiu@firm.cn\n合作项目：项目7\n\n请尽快对接。\n"
+  },
+  {
+    "id": "106ff46a74fa643e",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "wushi@bizz.com",
+    "expected_masked": "w***@bizz.com",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-08\n\n合作伙伴信息更新：\n\n公司：合作公司8\n联系人邮箱：wushi@bizz.com\n合作项目：项目8\n\n请尽快对接。\n"
+  },
+  {
+    "id": "dbaa581898d4bd1f",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "zheng11@tech.cn",
+    "expected_masked": "z***@tech.cn",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-09\n\n合作伙伴信息更新：\n\n公司：合作公司9\n联系人邮箱：zheng11@tech.cn\n合作项目：项目9\n\n请尽快对接。\n"
+  },
+  {
+    "id": "4502dc390cfb2087",
+    "type": "email_address",
+    "sensitive_field": "email",
+    "original_value": "xiaoming@dev.com",
+    "expected_masked": "x***@dev.com",
+    "subject": "合作伙伴联系信息",
+    "content": "主题：合作伙伴联系信息\n发件人：市场部\n收件人：销售组\n日期：2026-05-10\n\n合作伙伴信息更新：\n\n公司：合作公司10\n联系人邮箱：xiaoming@dev.com\n合作项目：项目10\n\n请尽快对接。\n"
+  },
+  {
+    "id": "60b3c7fca44adf1d",
+    "type": "id_card",
+    "sensitive_field": "id_card",
+    "original_value": "330102199001011234",
+    "expected_masked": "******1234",
+    "subject": "员工入职材料",
+    "content": "主题：员工入职材料\n发件人：人事部\n收件人：行政部\n日期：2026-05-01\n\n新员工入职材料：\n\n员工姓名：新员工1\n身份证号：330102199001011234\n入职日期：2026-05-01\n\n请办理相关手续。\n"
+  },
+  {
+    "id": "5bfadd8605e1a3ea",
+    "type": "id_card",
+    "sensitive_field": "id_card",
+    "original_value": "110101198512121234",
+    "expected_masked": "******1234",
+    "subject": "员工入职材料",
+    "content": "主题：员工入职材料\n发件人：人事部\n收件人：行政部\n日期：2026-05-02\n\n新员工入职材料：\n\n员工姓名：新员工2\n身份证号：110101198512121234\n入职日期：2026-05-02\n\n请办理相关手续。\n"
+  },
+  {
+    "id": "0ca00dd851f2f3f3",
+    "type": "id_card",
+    "sensitive_field": "id_card",
+    "original_value": "440302199203031234",
+    "expected_masked": "******1234",
+    "subject": "员工入职材料",
+    "content": "主题：员工入职材料\n发件人：人事部\n收件人：行政部\n日期：2026-05-03\n\n新员工入职材料：\n\n员工姓名：新员工3\n身份证号：440302199203031234\n入职日期：2026-05-03\n\n请办理相关手续。\n"
+  },
+  {
+    "id": "177125d6d67b48aa",
+    "type": "id_card",
+    "sensitive_field": "id_card",
+    "original_value": "310105197809091234",
+    "expected_masked": "******1234",
+    "subject": "员工入职材料",
+    "content": "主题：员工入职材料\n发件人：人事部\n收件人：行政部\n日期：2026-05-04\n\n新员工入职材料：\n\n员工姓名：新员工4\n身份证号：310105197809091234\n入职日期：2026-05-04\n\n请办理相关手续。\n"
+  },
+  {
+    "id": "558add44287b6d1e",
+    "type": "id_card",
+    "sensitive_field": "id_card",
+    "original_value": "420102199405051234",
+    "expected_masked": "******1234",
+    "subject": "员工入职材料",
+    "content": "主题：员工入职材料\n发件人：人事部\n收件人：行政部\n日期：2026-05-05\n\n新员工入职材料：\n\n员工姓名：新员工5\n身份证号：420102199405051234\n入职日期：2026-05-05\n\n请办理相关手续。\n"
+  },
+  {
+    "id": "87a03062eafd1c35",
+    "type": "amount",
+    "sensitive_field": "amount",
+    "original_value": "¥100000",
+    "expected_masked": "¥****",
+    "subject": "财务审批",
+    "content": "主题：财务审批\n发件人：财务部\n收件人：总经理\n日期：2026-05-01\n\n财务审批申请：\n\n项目：项目1\n金额：¥100000\n用途：项目1相关支出\n\n请审批。\n"
+  },
+  {
+    "id": "51af46f85b8a74fe",
+    "type": "amount",
+    "sensitive_field": "amount",
+    "original_value": "$50000",
+    "expected_masked": "$****",
+    "subject": "财务审批",
+    "content": "主题：财务审批\n发件人：财务部\n收件人：总经理\n日期：2026-05-02\n\n财务审批申请：\n\n项目：项目2\n金额：$50000\n用途：项目2相关支出\n\n请审批。\n"
+  },
+  {
+    "id": "b612f68cadaa8b29",
+    "type": "amount",
+    "sensitive_field": "amount",
+    "original_value": "150万",
+    "expected_masked": "¥****",
+    "subject": "财务审批",
+    "content": "主题：财务审批\n发件人：财务部\n收件人：总经理\n日期：2026-05-03\n\n财务审批申请：\n\n项目：项目3\n金额：150万\n用途：项目3相关支出\n\n请审批。\n"
+  },
+  {
+    "id": "5d50029e21aa1de2",
+    "type": "amount",
+    "sensitive_field": "amount",
+    "original_value": "合同金额800万元",
+    "expected_masked": "¥****",
+    "subject": "财务审批",
+    "content": "主题：财务审批\n发件人：财务部\n收件人：总经理\n日期：2026-05-04\n\n财务审批申请：\n\n项目：项目4\n金额：合同金额800万元\n用途：项目4相关支出\n\n请审批。\n"
+  },
+  {
+    "id": "afb0045277f871c5",
+    "type": "amount",
+    "sensitive_field": "amount",
+    "original_value": "预算500000元",
+    "expected_masked": "¥****",
+    "subject": "财务审批",
+    "content": "主题：财务审批\n发件人：财务部\n收件人：总经理\n日期：2026-05-05\n\n财务审批申请：\n\n项目：项目5\n金额：预算500000元\n用途：项目5相关支出\n\n请审批。\n"
+  },
+  {
+    "id": "a4301f0525f23308",
+    "type": "password",
+    "sensitive_field": "password",
+    "original_value": "Abc123!@#",
+    "expected_masked": "******",
+    "subject": "系统账号开通",
+    "content": "主题：系统账号开通\n发件人：IT部\n收件人：新员工1\n日期：2026-05-01\n\n系统账号已开通：\n\n用户名：user1\n登录密码：Abc123!@#\n有效期：永久\n\n请首次登录后修改密码。\n"
+  },
+  {
+    "id": "ebb9ec1dd3b62dd0",
+    "type": "password",
+    "sensitive_field": "password",
+    "original_value": "Password123",
+    "expected_masked": "******",
+    "subject": "系统账号开通",
+    "content": "主题：系统账号开通\n发件人：IT部\n收件人：新员工2\n日期：2026-05-02\n\n系统账号已开通：\n\n用户名：user2\n登录密码：Password123\n有效期：永久\n\n请首次登录后修改密码。\n"
+  },
+  {
+    "id": "43e2e6da446ac4d3",
+    "type": "password",
+    "sensitive_field": "password",
+    "original_value": "Admin@2026",
+    "expected_masked": "******",
+    "subject": "系统账号开通",
+    "content": "主题：系统账号开通\n发件人：IT部\n收件人：新员工3\n日期：2026-05-03\n\n系统账号已开通：\n\n用户名：user3\n登录密码：Admin@2026\n有效期：永久\n\n请首次登录后修改密码。\n"
+  },
+  {
+    "id": "49812f05c4f3494b",
+    "type": "password",
+    "sensitive_field": "password",
+    "original_value": "TestPass!@",
+    "expected_masked": "******",
+    "subject": "系统账号开通",
+    "content": "主题：系统账号开通\n发件人：IT部\n收件人：新员工4\n日期：2026-05-04\n\n系统账号已开通：\n\n用户名：user4\n登录密码：TestPass!@\n有效期：永久\n\n请首次登录后修改密码。\n"
+  },
+  {
+    "id": "26e63df45f2e2119",
+    "type": "password",
+    "sensitive_field": "password",
+    "original_value": "Secure#123",
+    "expected_masked": "******",
+    "subject": "系统账号开通",
+    "content": "主题：系统账号开通\n发件人：IT部\n收件人：新员工5\n日期：2026-05-05\n\n系统账号已开通：\n\n用户名：user5\n登录密码：Secure#123\n有效期：永久\n\n请首次登录后修改密码。\n"
+  }
+]

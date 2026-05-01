@@ -1,0 +1,226 @@
+{
+  "description": "MailKnow V5.2 搜索测试集（30条查询）",
+  "created_at": "2026-05-01",
+  "categories": {
+    "entity_queries": "实体查询 - 查询特定实体的邮件往来",
+    "semantic_queries": "语义查询 - 按内容的语义搜索",
+    "structured_queries": "结构化查询 - 按条件筛选的查询"
+  },
+  "queries": [
+    {
+      "id": "eq_001",
+      "category": "entity_queries",
+      "query": "和张三往来的邮件",
+      "expected_type": "entity_relation",
+      "difficulty": "easy"
+    },
+    {
+      "id": "eq_002",
+      "category": "entity_queries",
+      "query": "李四发给我的邮件",
+      "expected_type": "entity_sender",
+      "difficulty": "easy"
+    },
+    {
+      "id": "eq_003",
+      "category": "entity_queries",
+      "query": "我发给王五的邮件",
+      "expected_type": "entity_recipient",
+      "difficulty": "easy"
+    },
+    {
+      "id": "eq_004",
+      "category": "entity_queries",
+      "query": "和A公司的往来邮件",
+      "expected_type": "entity_organization",
+      "difficulty": "medium"
+    },
+    {
+      "id": "eq_005",
+      "category": "entity_queries",
+      "query": "项目X相关人员的邮件",
+      "expected_type": "entity_project",
+      "difficulty": "hard"
+    },
+    {
+      "id": "eq_006",
+      "category": "entity_queries",
+      "query": "财务部发的邮件",
+      "expected_type": "entity_department",
+      "difficulty": "medium"
+    },
+    {
+      "id": "eq_007",
+      "category": "entity_queries",
+      "query": "老板转发的邮件",
+      "expected_type": "entity_forward",
+      "difficulty": "medium"
+    },
+    {
+      "id": "eq_008",
+      "category": "entity_queries",
+      "query": "我抄送给张三的邮件",
+      "expected_type": "entity_cc",
+      "difficulty": "hard"
+    },
+    {
+      "id": "eq_009",
+      "category": "entity_queries",
+      "query": "来自163邮箱的邮件",
+      "expected_type": "entity_domain",
+      "difficulty": "easy"
+    },
+    {
+      "id": "eq_010",
+      "category": "entity_queries",
+      "query": "张经理审批的邮件",
+      "expected_type": "entity_action",
+      "difficulty": "hard"
+    },
+    {
+      "id": "sq_001",
+      "category": "semantic_queries",
+      "query": "关于项目进度的讨论",
+      "expected_type": "topic_progress",
+      "difficulty": "medium"
+    },
+    {
+      "id": "sq_002",
+      "category": "semantic_queries",
+      "query": "合同审批相关邮件",
+      "expected_type": "topic_approval",
+      "difficulty": "medium"
+    },
+    {
+      "id": "sq_003",
+      "category": "semantic_queries",
+      "query": "报价单和价格讨论",
+      "expected_type": "topic_pricing",
+      "difficulty": "medium"
+    },
+    {
+      "id": "sq_004",
+      "category": "semantic_queries",
+      "query": "技术方案和架构讨论",
+      "expected_type": "topic_technical",
+      "difficulty": "hard"
+    },
+    {
+      "id": "sq_005",
+      "category": "semantic_queries",
+      "query": "客户投诉或问题反馈",
+      "expected_type": "topic_complaint",
+      "difficulty": "medium"
+    },
+    {
+      "id": "sq_006",
+      "category": "semantic_queries",
+      "query": "会议安排和日程协调",
+      "expected_type": "topic_meeting",
+      "difficulty": "easy"
+    },
+    {
+      "id": "sq_007",
+      "category": "semantic_queries",
+      "query": "产品需求变更讨论",
+      "expected_type": "topic_requirement",
+      "difficulty": "medium"
+    },
+    {
+      "id": "sq_008",
+      "category": "semantic_queries",
+      "query": "紧急或者重要的邮件",
+      "expected_type": "topic_urgent",
+      "difficulty": "easy"
+    },
+    {
+      "id": "sq_009",
+      "category": "semantic_queries",
+      "query": "团队建设和活动通知",
+      "expected_type": "topic_team",
+      "difficulty": "easy"
+    },
+    {
+      "id": "sq_010",
+      "category": "semantic_queries",
+      "query": "供应商合作和采购事宜",
+      "expected_type": "topic_procurement",
+      "difficulty": "medium"
+    },
+    {
+      "id": "stq_001",
+      "category": "structured_queries",
+      "query": "上周的审批邮件",
+      "expected_type": "time_gate",
+      "difficulty": "easy"
+    },
+    {
+      "id": "stq_002",
+      "category": "structured_queries",
+      "query": "最近3个月金额超5万的审批",
+      "expected_type": "time_amount_gate",
+      "difficulty": "hard"
+    },
+    {
+      "id": "stq_003",
+      "category": "structured_queries",
+      "query": "本周未读的重要邮件",
+      "expected_type": "time_status",
+      "difficulty": "medium"
+    },
+    {
+      "id": "stq_004",
+      "category": "structured_queries",
+      "query": "去年12月的报销邮件",
+      "expected_type": "time_topic",
+      "difficulty": "medium"
+    },
+    {
+      "id": "stq_005",
+      "category": "structured_queries",
+      "query": "有附件的合同邮件",
+      "expected_type": "attachment_topic",
+      "difficulty": "medium"
+    },
+    {
+      "id": "stq_006",
+      "category": "structured_queries",
+      "query": "本月待审批的邮件",
+      "expected_type": "time_status_gate",
+      "difficulty": "medium"
+    },
+    {
+      "id": "stq_007",
+      "category": "structured_queries",
+      "query": "我发起的会议邀请",
+      "expected_type": "self_action_topic",
+      "difficulty": "easy"
+    },
+    {
+      "id": "stq_008",
+      "category": "structured_queries",
+      "query": "超过10人的邮件讨论",
+      "expected_type": "participant_count",
+      "difficulty": "hard"
+    },
+    {
+      "id": "stq_009",
+      "category": "structured_queries",
+      "query": "周五下午的邮件",
+      "expected_type": "time_specific",
+      "difficulty": "easy"
+    },
+    {
+      "id": "stq_010",
+      "category": "structured_queries",
+      "query": "抄送老板的所有邮件",
+      "criteria": "cc_hierarchy",
+      "difficulty": "medium"
+    }
+  ],
+  "test_instructions": {
+    "accuracy_criteria": "命中目标邮件数量 >= 预期数量的80%",
+    "precision_criteria": "返回结果中相关邮件占比 >= 70%",
+    "response_time_criteria": "P95响应时间 < 500ms"
+  }
+}
