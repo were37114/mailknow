@@ -1,12 +1,866 @@
 [
   {
-    "id": "border_cc_approval",
-    "description": "CC审批 - 低置信度，抄送中包含审批请求",
+    "id": "direct_001",
+    "description": "直接审批 - 请审批Q2采购预算",
+    "email": {
+      "subject": "请审批Q2采购预算",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "Q2采购预算已整理完成，金额￥50,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_002",
+    "description": "直接审批 - 服务器扩容申请审批",
+    "email": {
+      "subject": "服务器扩容申请审批",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "线上服务器负载过高，需扩容3台，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_003",
+    "description": "直接审批 - 差旅报销单审批",
+    "email": {
+      "subject": "差旅报销单审批",
+      "from_addr": "team@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "北京出差费用报销，共计￥8,500，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_004",
+    "description": "直接审批 - 新员工入职审批",
+    "email": {
+      "subject": "新员工入职审批",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "张三已通过面试，请审批入职流程"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_005",
+    "description": "直接审批 - 合同续签审批",
+    "email": {
+      "subject": "合同续签审批",
+      "from_addr": "legal@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "与供应商A的合同即将到期，请审批续签"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_006",
+    "description": "直接审批 - 软件许可购买审批",
+    "email": {
+      "subject": "软件许可购买审批",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "JetBrains全公司许可，年费￥120,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_007",
+    "description": "直接审批 - 办公设备采购审批",
+    "email": {
+      "subject": "办公设备采购审批",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "新工位需配置显示器和键盘，请审批采购"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_008",
+    "description": "直接审批 - 培训预算申请审批",
+    "email": {
+      "subject": "培训预算申请审批",
+      "from_addr": "team@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "团队技术培训2人，预算￥15,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_009",
+    "description": "直接审批 - 客户退款审批",
+    "email": {
+      "subject": "客户退款审批",
+      "from_addr": "cs@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "客户A申请退款￥3,200，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_010",
+    "description": "直接审批 - 项目立项审批",
+    "email": {
+      "subject": "项目立项审批",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "新项目MailMind立项，需审批启动"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_011",
+    "description": "直接审批 - 加班申请审批",
+    "email": {
+      "subject": "加班申请审批",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "本周六加班处理紧急Bug，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_012",
+    "description": "直接审批 - 会议室改造预算审批",
+    "email": {
+      "subject": "会议室改造预算审批",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "5楼会议室改造，预估￥25,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_013",
+    "description": "直接审批 - 市场活动费用审批",
+    "email": {
+      "subject": "市场活动费用审批",
+      "from_addr": "marketing@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "618促销活动费用申请，￥80,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_014",
+    "description": "直接审批 - 供应商变更审批",
+    "email": {
+      "subject": "供应商变更审批",
+      "from_addr": "procurement@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "供应商B替代供应商A，需审批变更"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_015",
+    "description": "直接审批 - 权限开通审批",
+    "email": {
+      "subject": "权限开通审批",
+      "from_addr": "it@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "新员工张三需开通VPN权限，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_016",
+    "description": "直接审批 - 年度体检安排审批",
+    "email": {
+      "subject": "年度体检安排审批",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "2026年度员工体检，预算￥200/人，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_017",
+    "description": "直接审批 - 代码仓库迁移审批",
+    "email": {
+      "subject": "代码仓库迁移审批",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "从GitLab迁移至GitHub，需审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_018",
+    "description": "直接审批 - 客户合同审批",
+    "email": {
+      "subject": "客户合同审批",
+      "from_addr": "sales@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "客户C的SaaS服务合同，金额￥200,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_019",
+    "description": "直接审批 - 数据备份方案审批",
+    "email": {
+      "subject": "数据备份方案审批",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "新数据备份方案审批，年费￥30,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_020",
+    "description": "直接审批 - 假期审批",
+    "email": {
+      "subject": "假期审批",
+      "from_addr": "team@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "申请5月15日-5月19日年假，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_021",
+    "description": "直接审批 - 服务器迁移审批",
+    "email": {
+      "subject": "服务器迁移审批",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "从IDC迁移至云服务器，费用￥150,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_022",
+    "description": "直接审批 - 团建费用审批",
+    "email": {
+      "subject": "团建费用审批",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "部门团建活动，预算￥10,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_023",
+    "description": "直接审批 - 测试环境扩容审批",
+    "email": {
+      "subject": "测试环境扩容审批",
+      "from_addr": "qa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "测试服务器需增加2台实例，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_024",
+    "description": "直接审批 - 广告投放审批",
+    "email": {
+      "subject": "广告投放审批",
+      "from_addr": "marketing@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "百度搜索广告投放，预算￥50,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_025",
+    "description": "直接审批 - 设备报废审批",
+    "email": {
+      "subject": "设备报废审批",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "5台旧服务器报废处理，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_026",
+    "description": "直接审批 - 外包服务审批",
+    "email": {
+      "subject": "外包服务审批",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "UI设计外包，费用￥60,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_027",
+    "description": "直接审批 - 合规审查审批",
+    "email": {
+      "subject": "合规审查审批",
+      "from_addr": "legal@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "数据合规审查需外部顾问，费用￥40,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_028",
+    "description": "直接审批 - 安全审计报告审批",
+    "email": {
+      "subject": "安全审计报告审批",
+      "from_addr": "security@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "年度安全审计报告，请审阅批准"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_029",
+    "description": "直接审批 - 专利申请审批",
+    "email": {
+      "subject": "专利申请审批",
+      "from_addr": "rd@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "新算法专利申请，费用￥20,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_030",
+    "description": "直接审批 - 客户赠品审批",
+    "email": {
+      "subject": "客户赠品审批",
+      "from_addr": "sales@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "VIP客户赠品预算￥5,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_031",
+    "description": "直接审批 - 办公室租赁审批",
+    "email": {
+      "subject": "办公室租赁审批",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "新办公室续租，年租金￥500,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_032",
+    "description": "直接审批 - API服务开通审批",
+    "email": {
+      "subject": "API服务开通审批",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "第三方API服务年费￥12,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_033",
+    "description": "直接审批 - 技术选型审批",
+    "email": {
+      "subject": "技术选型审批",
+      "from_addr": "cto@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "前端框架从Vue迁移至React，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_034",
+    "description": "直接审批 - 人事调整审批",
+    "email": {
+      "subject": "人事调整审批",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "张三从研发部调至产品部，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_035",
+    "description": "直接审批 - 投标审批",
+    "email": {
+      "subject": "投标审批",
+      "from_addr": "bd@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "政府项目投标，押金￥30,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_036",
+    "description": "直接审批 - 物流合作审批",
+    "email": {
+      "subject": "物流合作审批",
+      "from_addr": "procurement@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "与物流公司D签订合作协议，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_037",
+    "description": "直接审批 - 系统升级审批",
+    "email": {
+      "subject": "系统升级审批",
+      "from_addr": "it@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "ERP系统从V3升级至V4，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_038",
+    "description": "直接审批 - 质量认证审批",
+    "email": {
+      "subject": "质量认证审批",
+      "from_addr": "qa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "ISO9001认证续期，费用￥15,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_039",
+    "description": "直接审批 - 财务月报签核",
+    "email": {
+      "subject": "财务月报签核",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "4月财务月报请审批签发"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_040",
+    "description": "直接审批 - 付款申请签字",
+    "email": {
+      "subject": "付款申请签字",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "供应商E付款￥45,000请签字确认"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_041",
+    "description": "直接审批 - 技术方案审核",
+    "email": {
+      "subject": "技术方案审核",
+      "from_addr": "arch@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "微服务架构方案请审核批准"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_042",
+    "description": "直接审批 - 招聘需求批准",
+    "email": {
+      "subject": "招聘需求批准",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "高级工程师HC 2个请批准"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_043",
+    "description": "直接审批 - 域名续费审批",
+    "email": {
+      "subject": "域名续费审批",
+      "from_addr": "it@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "公司域名续费10年，￥5,000，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_044",
+    "description": "直接审批 - 产品发布确认",
+    "email": {
+      "subject": "产品发布确认",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "V2.0版本发布请审批确认"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_045",
+    "description": "直接审批 - 合同变更签核",
+    "email": {
+      "subject": "合同变更签核",
+      "from_addr": "legal@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "合同条款第3条变更请签核"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_046",
+    "description": "直接审批 - 紧急采购审批",
+    "email": {
+      "subject": "紧急采购审批",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "生产环境硬件故障紧急采购￥25,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_047",
+    "description": "直接审批 - 预算调整审核",
+    "email": {
+      "subject": "预算调整审核",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "Q3预算从100万调整至120万，请审核"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_048",
+    "description": "直接审批 - 远程办公批准",
+    "email": {
+      "subject": "远程办公批准",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "张三远程办公3个月请批准"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_049",
+    "description": "直接审批 - 账号开通审批",
+    "email": {
+      "subject": "账号开通审批",
+      "from_addr": "procurement@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "新供应商F采购平台账号开通，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "direct_050",
+    "description": "直接审批 - 印章使用签核",
+    "email": {
+      "subject": "印章使用签核",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "合同盖章请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "direct"
+    }
+  },
+  {
+    "id": "cc_001",
+    "description": "CC审批 - FYI: 张三的合同审批请求",
     "email": {
       "subject": "FYI: 张三的合同审批请求",
       "from_addr": "pm@company.com",
-      "to_addrs": ["finance@company.com"],
-      "cc_addrs": ["user@company.com"],
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
       "content": "请财务部门审批此合同，抄送知会"
     },
     "expected": {
@@ -16,12 +870,994 @@
     }
   },
   {
-    "id": "border_completed_notification",
-    "description": "已完成审批通知 - Gate1但不是审批请求",
+    "id": "cc_002",
+    "description": "CC审批 - FYI: 项目预算调整通知",
     "email": {
-      "subject": "【重要】合同审批已通过",
+      "subject": "FYI: 项目预算调整通知",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "项目预算已调整至120万，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_003",
+    "description": "CC审批 - FYI: 审批进度更新",
+    "email": {
+      "subject": "FYI: 审批进度更新",
       "from_addr": "system@company.com",
-      "to_addrs": ["user@company.com"],
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "采购审批已流转至部门经理，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_004",
+    "description": "CC审批 - FYI: 新政策审批流转",
+    "email": {
+      "subject": "FYI: 新政策审批流转",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "远程办公政策变更审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_005",
+    "description": "CC审批 - FYI: 年度预算方案",
+    "email": {
+      "subject": "FYI: 年度预算方案",
+      "from_addr": "cfo@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "2026年度预算已提交审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_006",
+    "description": "CC审批 - FYI: 供应商合同审批",
+    "email": {
+      "subject": "FYI: 供应商合同审批",
+      "from_addr": "procurement@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "供应商G合同审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_007",
+    "description": "CC审批 - FYI: 报销审批通知",
+    "email": {
+      "subject": "FYI: 报销审批通知",
+      "from_addr": "team@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "差旅报销单已提交审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_008",
+    "description": "CC审批 - FYI: 加班审批抄送",
+    "email": {
+      "subject": "FYI: 加班审批抄送",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "李四加班申请已审批通过，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_009",
+    "description": "CC审批 - FYI: 设备采购审批流转",
+    "email": {
+      "subject": "FYI: 设备采购审批流转",
+      "from_addr": "it@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "笔记本电脑采购审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_010",
+    "description": "CC审批 - FYI: 客户合同审批抄送",
+    "email": {
+      "subject": "FYI: 客户合同审批抄送",
+      "from_addr": "sales@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "客户H合同审批流程已启动，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_011",
+    "description": "CC审批 - FYI: 请假审批通知",
+    "email": {
+      "subject": "FYI: 请假审批通知",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "王五年假申请已批准，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_012",
+    "description": "CC审批 - FYI: 项目立项审批抄送",
+    "email": {
+      "subject": "FYI: 项目立项审批抄送",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "新项目已通过立项审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_013",
+    "description": "CC审批 - FYI: 培训申请审批",
+    "email": {
+      "subject": "FYI: 培训申请审批",
+      "from_addr": "team@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "技术培训申请已提交，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_014",
+    "description": "CC审批 - FYI: 服务器采购审批",
+    "email": {
+      "subject": "FYI: 服务器采购审批",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "新服务器采购审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_015",
+    "description": "CC审批 - FYI: 办公室装修审批",
+    "email": {
+      "subject": "FYI: 办公室装修审批",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "5楼装修方案审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_016",
+    "description": "CC审批 - FYI: 软件购买审批抄送",
+    "email": {
+      "subject": "FYI: 软件购买审批抄送",
+      "from_addr": "design@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "Figma企业版购买审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_017",
+    "description": "CC审批 - FYI: 市场活动审批通知",
+    "email": {
+      "subject": "FYI: 市场活动审批通知",
+      "from_addr": "marketing@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "618活动方案审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_018",
+    "description": "CC审批 - FYI: 差旅审批抄送",
+    "email": {
+      "subject": "FYI: 差旅审批抄送",
+      "from_addr": "team@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "上海出差审批已流转，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_019",
+    "description": "CC审批 - FYI: 合同续签审批",
+    "email": {
+      "subject": "FYI: 合同续签审批",
+      "from_addr": "legal@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "与供应商I的合同续签审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_020",
+    "description": "CC审批 - FYI: 权限开通审批通知",
+    "email": {
+      "subject": "FYI: 权限开通审批通知",
+      "from_addr": "it@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "VPN权限开通审批已通过，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_021",
+    "description": "CC审批 - FYI: 团建活动审批抄送",
+    "email": {
+      "subject": "FYI: 团建活动审批抄送",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "部门团建方案审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_022",
+    "description": "CC审批 - FYI: 广告投放审批",
+    "email": {
+      "subject": "FYI: 广告投放审批",
+      "from_addr": "marketing@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "Google Ads投放审批已提交，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_023",
+    "description": "CC审批 - FYI: 外包审批通知",
+    "email": {
+      "subject": "FYI: 外包审批通知",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "UI设计外包审批已通过，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_024",
+    "description": "CC审批 - FYI: 合规审批抄送",
+    "email": {
+      "subject": "FYI: 合规审批抄送",
+      "from_addr": "legal@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "数据合规审查审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_025",
+    "description": "CC审批 - FYI: 安全审计审批通知",
+    "email": {
+      "subject": "FYI: 安全审计审批通知",
+      "from_addr": "security@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "安全审计报告审批流转，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_026",
+    "description": "CC审批 - FYI: 专利审批抄送",
+    "email": {
+      "subject": "FYI: 专利审批抄送",
+      "from_addr": "rd@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "新专利申请审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_027",
+    "description": "CC审批 - FYI: 客户赠品审批",
+    "email": {
+      "subject": "FYI: 客户赠品审批",
+      "from_addr": "sales@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "VIP客户赠品审批通过，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_028",
+    "description": "CC审批 - FYI: 租赁审批通知",
+    "email": {
+      "subject": "FYI: 租赁审批通知",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "办公室续租审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_029",
+    "description": "CC审批 - FYI: API服务审批抄送",
+    "email": {
+      "subject": "FYI: API服务审批抄送",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "第三方API审批已提交，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_030",
+    "description": "CC审批 - FYI: 技术选型审批通知",
+    "email": {
+      "subject": "FYI: 技术选型审批通知",
+      "from_addr": "cto@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "框架迁移审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_031",
+    "description": "CC审批 - FYI: 人事调整审批抄送",
+    "email": {
+      "subject": "FYI: 人事调整审批抄送",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "人员调动审批已启动，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_032",
+    "description": "CC审批 - FYI: 投标审批通知",
+    "email": {
+      "subject": "FYI: 投标审批通知",
+      "from_addr": "bd@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "政府项目投标审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_033",
+    "description": "CC审批 - FYI: 物流审批抄送",
+    "email": {
+      "subject": "FYI: 物流审批抄送",
+      "from_addr": "procurement@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "物流合作审批已提交，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_034",
+    "description": "CC审批 - FYI: 系统升级审批通知",
+    "email": {
+      "subject": "FYI: 系统升级审批通知",
+      "from_addr": "it@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "ERP升级审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_035",
+    "description": "CC审批 - FYI: 认证审批抄送",
+    "email": {
+      "subject": "FYI: 认证审批抄送",
+      "from_addr": "qa@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "ISO认证续期审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_036",
+    "description": "CC审批 - 审批通知：月度财务",
+    "email": {
+      "subject": "审批通知：月度财务",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "月度财务报告审批流转，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_037",
+    "description": "CC审批 - 审批通知：供应商变更",
+    "email": {
+      "subject": "审批通知：供应商变更",
+      "from_addr": "procurement@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "供应商J变更审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_038",
+    "description": "CC审批 - 审批流转：代码审查",
+    "email": {
+      "subject": "审批流转：代码审查",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "核心模块代码审查审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_039",
+    "description": "CC审批 - 审批通知：数据备份",
+    "email": {
+      "subject": "审批通知：数据备份",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "备份方案审批已提交，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_040",
+    "description": "CC审批 - 审批抄送：会议纪要",
+    "email": {
+      "subject": "审批抄送：会议纪要",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "管理层会议纪要审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_041",
+    "description": "CC审批 - 审批通知：产品路线图",
+    "email": {
+      "subject": "审批通知：产品路线图",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "H2产品路线图审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_042",
+    "description": "CC审批 - 审批抄送：安全策略",
+    "email": {
+      "subject": "审批抄送：安全策略",
+      "from_addr": "security@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "安全策略更新审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_043",
+    "description": "CC审批 - 审批通知：云服务",
+    "email": {
+      "subject": "审批通知：云服务",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "云服务续费审批已提交，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_044",
+    "description": "CC审批 - 审批抄送：培训计划",
+    "email": {
+      "subject": "审批抄送：培训计划",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "年度培训计划审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_045",
+    "description": "CC审批 - 审批通知：办公采购",
+    "email": {
+      "subject": "审批通知：办公采购",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "办公文具批量采购审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_046",
+    "description": "CC审批 - 审批抄送：客户报价",
+    "email": {
+      "subject": "审批抄送：客户报价",
+      "from_addr": "sales@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "客户K报价审批已通过，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_047",
+    "description": "CC审批 - 审批通知：迁移方案",
+    "email": {
+      "subject": "审批通知：迁移方案",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "数据库迁移审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_048",
+    "description": "CC审批 - 审批抄送：费用分摊",
+    "email": {
+      "subject": "审批抄送：费用分摊",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "部门费用分摊审批流转，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_049",
+    "description": "CC审批 - 审批通知：年度总结",
+    "email": {
+      "subject": "审批通知：年度总结",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "年度工作总结审批，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "cc_050",
+    "description": "CC审批 - 审批抄送：新办公区",
+    "email": {
+      "subject": "审批抄送：新办公区",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "approver@company.com"
+      ],
+      "cc_addrs": [
+        "user@company.com"
+      ],
+      "content": "新办公区装修审批中，抄送知会"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "cc",
+      "confidence_max": 0.7
+    }
+  },
+  {
+    "id": "notification_001",
+    "description": "已完成通知 - 合同审批已通过",
+    "email": {
+      "subject": "合同审批已通过",
+      "from_addr": "system@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
       "cc_addrs": [],
       "content": "您提交的合同审批已通过，请查看附件"
     },
@@ -31,89 +1867,16 @@
     }
   },
   {
-    "id": "border_system_forward",
-    "description": "系统转发审批 - OA系统自动转发",
+    "id": "notification_002",
+    "description": "已完成通知 - 采购申请已批准",
     "email": {
-      "subject": "【系统转发】采购审批单 #12345",
-      "from_addr": "oa@company.com",
-      "to_addrs": ["user@company.com"],
-      "cc_addrs": [],
-      "content": "系统转发：请审批采购申请单#12345，金额￥5000"
-    },
-    "expected": {
-      "is_approval": true,
-      "approval_type": "direct"
-    }
-  },
-  {
-    "id": "border_confirmation_not_approval",
-    "description": "确认邮件但非审批 - 会议确认",
-    "email": {
-      "subject": "确认明天会议时间",
-      "from_addr": "colleague@company.com",
-      "to_addrs": ["user@company.com"],
-      "cc_addrs": [],
-      "content": "确认明天的会议时间改为下午3点"
-    },
-    "expected": {
-      "is_approval": false,
-      "approval_type": "none"
-    }
-  },
-  {
-    "id": "border_english_approval",
-    "description": "英文审批邮件",
-    "email": {
-      "subject": "Please approve the budget request",
-      "from_addr": "manager@company.com",
-      "to_addrs": ["user@company.com"],
-      "cc_addrs": [],
-      "content": "Hi, please review and approve the Q2 budget request attached."
-    },
-    "expected": {
-      "is_approval": true,
-      "approval_type": "direct"
-    }
-  },
-  {
-    "id": "border_mass_cc_approval",
-    "description": "群发CC审批 - 大量收件人抄送",
-    "email": {
-      "subject": "审批通知：年度预算方案",
-      "from_addr": "cfo@company.com",
-      "to_addrs": ["board@company.com"],
-      "cc_addrs": ["user@company.com", "team@company.com", "all@company.com"],
-      "content": "年度预算方案已提交审批，请知会"
-    },
-    "expected": {
-      "is_approval": false,
-      "approval_type": "notification"
-    }
-  },
-  {
-    "id": "border_urgent_approval",
-    "description": "紧急审批邮件",
-    "email": {
-      "subject": "【紧急】请立即审批服务器采购",
-      "from_addr": "cto@company.com",
-      "to_addrs": ["user@company.com"],
-      "cc_addrs": [],
-      "content": "服务器即将到期，请紧急审批采购申请"
-    },
-    "expected": {
-      "is_approval": true,
-      "approval_type": "direct"
-    }
-  },
-  {
-    "id": "border_rejection_notification",
-    "description": "审批拒绝通知",
-    "email": {
-      "subject": "审批未通过：差旅申请",
+      "subject": "采购申请已批准",
       "from_addr": "system@company.com",
-      "to_addrs": ["user@company.com"],
+      "to_addrs": [
+        "user@company.com"
+      ],
       "cc_addrs": [],
-      "content": "您的差旅申请审批未通过，原因：超出预算"
+      "content": "采购申请单#12345已批准"
     },
     "expected": {
       "is_approval": false,
@@ -121,33 +1884,1669 @@
     }
   },
   {
-    "id": "border_approval_with_discussion",
-    "description": "讨论中隐含审批请求",
+    "id": "notification_003",
+    "description": "已完成通知 - 报销已审批",
     "email": {
-      "subject": "关于新项目方案的讨论",
-      "from_addr": "pm@company.com",
-      "to_addrs": ["user@company.com"],
+      "subject": "报销已审批",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
       "cc_addrs": [],
-      "content": "新项目方案已整理完成，是否可以开始执行？请审核确认"
-    },
-    "expected": {
-      "is_approval": true,
-      "approval_type": "direct"
-    }
-  },
-  {
-    "id": "border_pure_discussion",
-    "description": "纯讨论邮件不含审批",
-    "email": {
-      "subject": "关于技术方案的讨论",
-      "from_addr": "dev@company.com",
-      "to_addrs": ["user@company.com"],
-      "cc_addrs": [],
-      "content": "我觉得方案A更好，大家觉得呢？"
+      "content": "差旅报销单已审批通过"
     },
     "expected": {
       "is_approval": false,
-      "approval_type": "none"
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_004",
+    "description": "已完成通知 - 请假审批已通过",
+    "email": {
+      "subject": "请假审批已通过",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "您的年假申请已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_005",
+    "description": "已完成通知 - 预算审批已完成",
+    "email": {
+      "subject": "预算审批已完成",
+      "from_addr": "cfo@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "Q2预算审批已完成"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_006",
+    "description": "已完成通知 - 权限开通完成",
+    "email": {
+      "subject": "权限开通完成",
+      "from_addr": "it@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "VPN权限已开通，请查收"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_007",
+    "description": "已完成通知 - 加班申请已批准",
+    "email": {
+      "subject": "加班申请已批准",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "加班申请已审批通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_008",
+    "description": "已完成通知 - 培训申请已通过",
+    "email": {
+      "subject": "培训申请已通过",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "技术培训申请已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_009",
+    "description": "已完成通知 - 差旅审批已通过",
+    "email": {
+      "subject": "差旅审批已通过",
+      "from_addr": "manager@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "上海出差审批已通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_010",
+    "description": "已完成通知 - 项目立项已批准",
+    "email": {
+      "subject": "项目立项已批准",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "新项目立项审批已通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_011",
+    "description": "已完成通知 - 设备采购已批准",
+    "email": {
+      "subject": "设备采购已批准",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "服务器采购已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_012",
+    "description": "已完成通知 - 软件购买已通过",
+    "email": {
+      "subject": "软件购买已通过",
+      "from_addr": "design@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "Figma企业版购买已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_013",
+    "description": "已完成通知 - 团建审批已完成",
+    "email": {
+      "subject": "团建审批已完成",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "部门团建方案已通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_014",
+    "description": "已完成通知 - 广告审批已通过",
+    "email": {
+      "subject": "广告审批已通过",
+      "from_addr": "marketing@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "Google Ads投放已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_015",
+    "description": "已完成通知 - 外包审批已完成",
+    "email": {
+      "subject": "外包审批已完成",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "UI设计外包已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_016",
+    "description": "已完成通知 - 合规审查已完成",
+    "email": {
+      "subject": "合规审查已完成",
+      "from_addr": "legal@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "数据合规审查审批已通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_017",
+    "description": "已完成通知 - 安全审计已通过",
+    "email": {
+      "subject": "安全审计已通过",
+      "from_addr": "security@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "安全审计报告已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_018",
+    "description": "已完成通知 - 专利申请已批准",
+    "email": {
+      "subject": "专利申请已批准",
+      "from_addr": "rd@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "新专利申请已通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_019",
+    "description": "已完成通知 - 客户赠品已审批",
+    "email": {
+      "subject": "客户赠品已审批",
+      "from_addr": "sales@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "VIP客户赠品审批已通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_020",
+    "description": "已完成通知 - 租赁审批已完成",
+    "email": {
+      "subject": "租赁审批已完成",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "办公室续租已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_021",
+    "description": "已完成通知 - API审批已通过",
+    "email": {
+      "subject": "API审批已通过",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "第三方API服务已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_022",
+    "description": "已完成通知 - 技术选型已批准",
+    "email": {
+      "subject": "技术选型已批准",
+      "from_addr": "cto@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "框架迁移方案已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_023",
+    "description": "已完成通知 - 人事调整已完成",
+    "email": {
+      "subject": "人事调整已完成",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "人员调动审批已完成"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_024",
+    "description": "已完成通知 - 投标审批已通过",
+    "email": {
+      "subject": "投标审批已通过",
+      "from_addr": "bd@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "政府项目投标已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_025",
+    "description": "已完成通知 - 物流审批已完成",
+    "email": {
+      "subject": "物流审批已完成",
+      "from_addr": "procurement@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "物流合作协议已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_026",
+    "description": "已完成通知 - 系统升级已完成",
+    "email": {
+      "subject": "系统升级已完成",
+      "from_addr": "it@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "ERP升级已审批通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_027",
+    "description": "已完成通知 - 认证审批已通过",
+    "email": {
+      "subject": "认证审批已通过",
+      "from_addr": "qa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "ISO认证续期已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_028",
+    "description": "已完成通知 - 月报审批已完成",
+    "email": {
+      "subject": "月报审批已完成",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "月度财务报告已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_029",
+    "description": "已完成通知 - 供应商变更已完成",
+    "email": {
+      "subject": "供应商变更已完成",
+      "from_addr": "procurement@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "供应商J变更审批已通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_030",
+    "description": "已完成通知 - 代码审查已通过",
+    "email": {
+      "subject": "代码审查已通过",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "核心模块代码审查已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_031",
+    "description": "已完成通知 - 备份方案已审批",
+    "email": {
+      "subject": "备份方案已审批",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "数据备份方案已通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_032",
+    "description": "已完成通知 - 会议纪要已审批",
+    "email": {
+      "subject": "会议纪要已审批",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "管理层会议纪要已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_033",
+    "description": "已完成通知 - 路线图已通过",
+    "email": {
+      "subject": "路线图已通过",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "H2产品路线图已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_034",
+    "description": "已完成通知 - 安全策略已批准",
+    "email": {
+      "subject": "安全策略已批准",
+      "from_addr": "security@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "安全策略更新已通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_035",
+    "description": "已完成通知 - 云服务已审批",
+    "email": {
+      "subject": "云服务已审批",
+      "from_addr": "ops@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "云服务续费已批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_036",
+    "description": "已完成通知 - 培训计划已通过",
+    "email": {
+      "subject": "培训计划已通过",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "年度培训计划已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_037",
+    "description": "已完成通知 - 办公采购已完成",
+    "email": {
+      "subject": "办公采购已完成",
+      "from_addr": "admin@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "办公文具采购已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_038",
+    "description": "已完成通知 - 客户报价已通过",
+    "email": {
+      "subject": "客户报价已通过",
+      "from_addr": "sales@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "客户K报价已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_039",
+    "description": "已完成通知 - 迁移方案已批准",
+    "email": {
+      "subject": "迁移方案已批准",
+      "from_addr": "dev@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "数据库迁移已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_040",
+    "description": "已完成通知 - 费用分摊已完成",
+    "email": {
+      "subject": "费用分摊已完成",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "部门费用分摊已审批"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_041",
+    "description": "已完成通知 - 合同审批未通过",
+    "email": {
+      "subject": "合同审批未通过",
+      "from_addr": "system@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "合同审批因条款问题未通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_042",
+    "description": "已完成通知 - 采购申请已驳回",
+    "email": {
+      "subject": "采购申请已驳回",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "采购申请超出预算已驳回"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_043",
+    "description": "已完成通知 - 报销审批已拒绝",
+    "email": {
+      "subject": "报销审批已拒绝",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "报销单据不完整已拒绝"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_044",
+    "description": "已完成通知 - 请假申请已驳回",
+    "email": {
+      "subject": "请假申请已驳回",
+      "from_addr": "hr@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "请假时间冲突已驳回"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_045",
+    "description": "已完成通知 - 加班申请未批准",
+    "email": {
+      "subject": "加班申请未批准",
+      "from_addr": "manager@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "加班理由不充分未批准"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_046",
+    "description": "已完成通知 - 差旅审批已拒绝",
+    "email": {
+      "subject": "差旅审批已拒绝",
+      "from_addr": "finance@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "差旅预算超限已拒绝"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_047",
+    "description": "已完成通知 - 预算审批已驳回",
+    "email": {
+      "subject": "预算审批已驳回",
+      "from_addr": "cfo@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "预算超标已驳回"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_048",
+    "description": "已完成通知 - 审批已过期",
+    "email": {
+      "subject": "审批已过期",
+      "from_addr": "system@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "审批超时未处理已自动关闭"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_049",
+    "description": "已完成通知 - 供应商变更已驳回",
+    "email": {
+      "subject": "供应商变更已驳回",
+      "from_addr": "procurement@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "供应商资质不符已驳回"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "notification_050",
+    "description": "已完成通知 - 外包审批未通过",
+    "email": {
+      "subject": "外包审批未通过",
+      "from_addr": "pm@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "外包方案不完善未通过"
+    },
+    "expected": {
+      "is_approval": false,
+      "approval_type": "notification"
+    }
+  },
+  {
+    "id": "system_forward_001",
+    "description": "系统转发审批 - 采购审批单 #10001",
+    "email": {
+      "subject": "采购审批单 #10001",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：请审批采购申请单#10001，金额￥5,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_002",
+    "description": "系统转发审批 - 请假审批 #10002",
+    "email": {
+      "subject": "请假审批 #10002",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：张三请假3天，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_003",
+    "description": "系统转发审批 - 报销审批 #10003",
+    "email": {
+      "subject": "报销审批 #10003",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：差旅报销￥3,200，请审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_004",
+    "description": "系统转发审批 - 合同审批 #10004",
+    "email": {
+      "subject": "合同审批 #10004",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：供应商M合同审批，金额￥80,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_005",
+    "description": "系统转发审批 - 权限审批 #10005",
+    "email": {
+      "subject": "权限审批 #10005",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：新员工VPN权限开通审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_006",
+    "description": "系统转发审批 - 加班审批 #10006",
+    "email": {
+      "subject": "加班审批 #10006",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：王五周末加班审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_007",
+    "description": "系统转发审批 - 预算审批 #10007",
+    "email": {
+      "subject": "预算审批 #10007",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：Q3预算调整审批，增量￥200,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_008",
+    "description": "系统转发审批 - 采购审批单 #10008",
+    "email": {
+      "subject": "采购审批单 #10008",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：办公设备采购￥12,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_009",
+    "description": "系统转发审批 - 差旅审批 #10009",
+    "email": {
+      "subject": "差旅审批 #10009",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：深圳出差审批，预算￥6,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_010",
+    "description": "系统转发审批 - 培训审批 #10010",
+    "email": {
+      "subject": "培训审批 #10010",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：AWS认证培训审批，费用￥8,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_011",
+    "description": "系统转发审批 - 请假审批 #10011",
+    "email": {
+      "subject": "请假审批 #10011",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：李四年假5天审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_012",
+    "description": "系统转发审批 - 合同审批 #10012",
+    "email": {
+      "subject": "合同审批 #10012",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：客户N服务合同￥150,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_013",
+    "description": "系统转发审批 - 报销审批 #10013",
+    "email": {
+      "subject": "报销审批 #10013",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：招待客户费用￥2,500"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_014",
+    "description": "系统转发审批 - 采购审批单 #10014",
+    "email": {
+      "subject": "采购审批单 #10014",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：开发机器采购￥35,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_015",
+    "description": "系统转发审批 - 权限审批 #10015",
+    "email": {
+      "subject": "权限审批 #10015",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：生产环境权限开通审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_016",
+    "description": "系统转发审批 - 加班审批 #10016",
+    "email": {
+      "subject": "加班审批 #10016",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：紧急Bug修复加班审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_017",
+    "description": "系统转发审批 - 预算审批 #10017",
+    "email": {
+      "subject": "预算审批 #10017",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：市场活动追加预算￥40,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_018",
+    "description": "系统转发审批 - 采购审批单 #10018",
+    "email": {
+      "subject": "采购审批单 #10018",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：安全设备采购￥55,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_019",
+    "description": "系统转发审批 - 差旅审批 #10019",
+    "email": {
+      "subject": "差旅审批 #10019",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：广州出差审批，预算￥4,500"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_020",
+    "description": "系统转发审批 - 培训审批 #10020",
+    "email": {
+      "subject": "培训审批 #10020",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：管理培训审批，费用￥12,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_021",
+    "description": "系统转发审批 - 请假审批 #10021",
+    "email": {
+      "subject": "请假审批 #10021",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：赵六病假2天审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_022",
+    "description": "系统转发审批 - 合同审批 #10022",
+    "email": {
+      "subject": "合同审批 #10022",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：外包服务合同￥200,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_023",
+    "description": "系统转发审批 - 报销审批 #10023",
+    "email": {
+      "subject": "报销审批 #10023",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：团队聚餐费用￥1,800"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_024",
+    "description": "系统转发审批 - 采购审批单 #10024",
+    "email": {
+      "subject": "采购审批单 #10024",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：测试设备采购￥18,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_025",
+    "description": "系统转发审批 - 权限审批 #10025",
+    "email": {
+      "subject": "权限审批 #10025",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：数据库只读权限开通审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_026",
+    "description": "系统转发审批 - 加班审批 #10026",
+    "email": {
+      "subject": "加班审批 #10026",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：版本发布加班审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_027",
+    "description": "系统转发审批 - 预算审批 #10027",
+    "email": {
+      "subject": "预算审批 #10027",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：研发工具追加预算￥25,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_028",
+    "description": "系统转发审批 - 采购审批单 #10028",
+    "email": {
+      "subject": "采购审批单 #10028",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：网络设备采购￥70,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_029",
+    "description": "系统转发审批 - 差旅审批 #10029",
+    "email": {
+      "subject": "差旅审批 #10029",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：成都出差审批，预算￥5,500"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_030",
+    "description": "系统转发审批 - 培训审批 #10030",
+    "email": {
+      "subject": "培训审批 #10030",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：安全培训审批，费用￥3,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_031",
+    "description": "系统转发审批 - 请假审批 #10031",
+    "email": {
+      "subject": "请假审批 #10031",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：孙七调休1天审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_032",
+    "description": "系统转发审批 - 合同审批 #10032",
+    "email": {
+      "subject": "合同审批 #10032",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：云服务合同￥300,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_033",
+    "description": "系统转发审批 - 报销审批 #10033",
+    "email": {
+      "subject": "报销审批 #10033",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：交通补贴报销￥800"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_034",
+    "description": "系统转发审批 - 采购审批单 #10034",
+    "email": {
+      "subject": "采购审批单 #10034",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：办公家具采购￥22,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_035",
+    "description": "系统转发审批 - 权限审批 #10035",
+    "email": {
+      "subject": "权限审批 #10035",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：测试环境管理员权限审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_036",
+    "description": "系统转发审批 - 加班审批 #10036",
+    "email": {
+      "subject": "加班审批 #10036",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：性能优化加班审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_037",
+    "description": "系统转发审批 - 预算审批 #10037",
+    "email": {
+      "subject": "预算审批 #10037",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：运维工具追加预算￥15,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_038",
+    "description": "系统转发审批 - 采购审批单 #10038",
+    "email": {
+      "subject": "采购审批单 #10038",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：监控设备采购￥28,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_039",
+    "description": "系统转发审批 - 差旅审批 #10039",
+    "email": {
+      "subject": "差旅审批 #10039",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：武汉出差审批，预算￥7,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_040",
+    "description": "系统转发审批 - 培训审批 #10040",
+    "email": {
+      "subject": "培训审批 #10040",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：产品培训审批，费用￥5,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_041",
+    "description": "系统转发审批 - 请假审批 #10041",
+    "email": {
+      "subject": "请假审批 #10041",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：周八事假1天审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_042",
+    "description": "系统转发审批 - 合同审批 #10042",
+    "email": {
+      "subject": "合同审批 #10042",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：物流服务合同￥100,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_043",
+    "description": "系统转发审批 - 报销审批 #10043",
+    "email": {
+      "subject": "报销审批 #10043",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：通讯费报销￥500"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_044",
+    "description": "系统转发审批 - 采购审批单 #10044",
+    "email": {
+      "subject": "采购审批单 #10044",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：开发工具采购￥9,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_045",
+    "description": "系统转发审批 - 权限审批 #10045",
+    "email": {
+      "subject": "权限审批 #10045",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：GitHub组织权限审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_046",
+    "description": "系统转发审批 - 加班审批 #10046",
+    "email": {
+      "subject": "加班审批 #10046",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：客户问题排查加班审批"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_047",
+    "description": "系统转发审批 - 预算审批 #10047",
+    "email": {
+      "subject": "预算审批 #10047",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：人力资源追加预算￥50,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_048",
+    "description": "系统转发审批 - 采购审批单 #10048",
+    "email": {
+      "subject": "采购审批单 #10048",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：空调设备采购￥45,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_049",
+    "description": "系统转发审批 - 差旅审批 #10049",
+    "email": {
+      "subject": "差旅审批 #10049",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：南京出差审批，预算￥4,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
+    }
+  },
+  {
+    "id": "system_forward_050",
+    "description": "系统转发审批 - 培训审批 #10050",
+    "email": {
+      "subject": "培训审批 #10050",
+      "from_addr": "oa@company.com",
+      "to_addrs": [
+        "user@company.com"
+      ],
+      "cc_addrs": [],
+      "content": "系统转发：领导力培训审批，费用￥20,000"
+    },
+    "expected": {
+      "is_approval": true,
+      "approval_type": "system_forward"
     }
   }
 ]
