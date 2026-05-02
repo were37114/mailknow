@@ -1,7 +1,7 @@
 [project]
-name = "mailmind"
-version = "0.1.0"
-description = "AI-powered email knowledge engine"
+name = "mailknow"
+version = "1.0.0"
+description = "AI-powered email knowledge engine - cross-ecosystem mail intelligence"
 requires-python = ">=3.11"
 dependencies = [
     "aiosqlite>=0.19.0",
