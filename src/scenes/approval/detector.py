@@ -128,7 +128,7 @@ class ApprovalDetector:
         )
         self.fallback = fallback or get_fallback()
     
-    async def detect(self, email: Email) -> ApprovalDetection:
+    async def detect(self, email: Email, user_email: str = "") -> ApprovalDetection:
         """Detect if email is an approval request with confidence level.
         
         Args:
@@ -172,7 +172,7 @@ class ApprovalDetector:
         
         if needs_llm:
             # Use Tier4 LLM for precise classification
-            approval_result = await self.tier4.classify_approval(email)
+            approval_result = await self.tier4.classify_approval(email, user_email=user_email)
             
             approval_type = self._map_approval_type(approval_result)
             confidence_level = _confidence_to_level(approval_result.confidence)
@@ -196,7 +196,7 @@ class ApprovalDetector:
             )
         else:
             # Local rule-based classification (no LLM needed)
-            approval_result = self.tier4._local_approval_classify(email)
+            approval_result = self.tier4._local_approval_classify(email, user_email=user_email)
             
             approval_type = self._map_approval_type(approval_result)
             confidence_level = _confidence_to_level(approval_result.confidence)

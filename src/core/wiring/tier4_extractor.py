@@ -90,7 +90,7 @@ class Tier4Extractor:
         self.llm = llm_client or get_llm_client()
         self.budget = token_budget or TokenBudget()
     
-    async def classify_approval(self, email: Email) -> ApprovalResult:
+    async def classify_approval(self, email: Email, user_email: str = "") -> ApprovalResult:
         """Classify if email is an approval request.
         
         Args:
@@ -102,13 +102,13 @@ class Tier4Extractor:
         # If LLM is local (no API), use rule-based classification directly
         if self.llm.provider == LLMProvider.LOCAL:
             logger.debug("Using local rule-based classification (no LLM API)")
-            return self._local_approval_classify(email)
+            return self._local_approval_classify(email, user_email=user_email)
         
         # Check budget
         estimated_tokens = 500  # ~400 input + ~100 output
         if not self.budget.check(estimated_tokens):
             logger.warning("Token budget exceeded, using local fallback")
-            return self._local_approval_classify(email)
+            return self._local_approval_classify(email, user_email=user_email)
         
         # Prepare prompt
         content = self._truncate_content(email.text_body or "", max_chars=1000)
@@ -175,7 +175,7 @@ class Tier4Extractor:
         
         return links
     
-    def _local_approval_classify(self, email: Email) -> ApprovalResult:
+    def _local_approval_classify(self, email: Email, user_email: str = "") -> ApprovalResult:
         """Local rule-based approval classification (fallback).
         
         Used when LLM is unavailable or budget exceeded.
@@ -190,6 +190,10 @@ class Tier4Extractor:
             "同意否", "是否可以", "审批请求", "审批申请",
             "approve", "approval", "sign off", "review and approve",
             "please approve",
+            # Additional patterns
+            "需审批", "需批准", "待审批", "待批准",
+            "立项审批", "预算审批", "合同审批", "费用审批",
+            "审批启动", "审批流程",
             # Shorter keywords last (lower priority)
             "请确认",
         ]
@@ -222,7 +226,9 @@ class Tier4Extractor:
         # Check if it's an approval request
         # First, check for compound approval patterns (请...审批/批准/审核)
         approval_action_words = ["审批", "批准", "签字", "审核"]
-        request_words = ["请", "需要", "要求", "烦请", "恳请", "望"]
+        request_words = ["请", "需要", "要求", "烦请", "恳请", "望", "需", "待"]
+        
+        is_cc_user = self._is_cc_recipient(email, user_email)
         
         for action in approval_action_words:
             for request in request_words:
@@ -230,24 +236,32 @@ class Tier4Extractor:
                 import re
                 pattern = rf"{request}.{{0,4}}{action}"
                 if re.search(pattern, subject_lower) or re.search(pattern, content_lower):
-                    is_cc = len(email.cc_addrs) > 0 and len(email.to_addrs) == 0
                     return ApprovalResult(
                         is_approval=True,
-                        confidence=0.85 if not is_cc else 0.5,
-                        approval_type="cc" if is_cc else "direct",
+                        confidence=0.85 if not is_cc_user else 0.5,
+                        approval_type="cc" if is_cc_user else "direct",
                         reason=f"包含审批请求模式: {request}...{action}"
+                    )
+        
+        # CC approval: user in CC + approval-related content (FYI, 抄送知会)
+        if is_cc_user:
+            cc_indicators = ["审批", "批准", "审核", "预算", "合同", "立项"]
+            for indicator in cc_indicators:
+                if indicator in subject_lower or indicator in content_lower:
+                    return ApprovalResult(
+                        is_approval=True,
+                        confidence=0.5,
+                        approval_type="cc",
+                        reason=f"CC审批知会: 包含'{indicator}'"
                     )
         
         # Then check exact keyword matches
         for kw in approval_keywords:
             if kw in subject_lower or kw in content_lower:
-                # Check if CC (not primary recipient)
-                is_cc = len(email.cc_addrs) > 0 and len(email.to_addrs) == 0
-                
                 return ApprovalResult(
                     is_approval=True,
-                    confidence=0.85 if not is_cc else 0.5,
-                    approval_type="cc" if is_cc else "direct",
+                    confidence=0.85 if not is_cc_user else 0.5,
+                    approval_type="cc" if is_cc_user else "direct",
                     reason=f"包含审批关键词: {kw}"
                 )
         
@@ -257,6 +271,37 @@ class Tier4Extractor:
             approval_type="none",
             reason="未检测到审批特征"
         )
+    
+    def _is_cc_recipient(self, email: Email, user_email: str = "") -> bool:
+        """Check if the user is a CC recipient (not primary recipient).
+        
+        A CC approval means the user was copied on an approval request
+        that was primarily addressed to someone else.
+        
+        Args:
+            email: The email to check
+            user_email: The current user's email address
+            
+        Returns:
+            True if user is in CC list (not in TO list)
+        """
+        if not user_email:
+            # Fallback: if we don't know the user's email,
+            # consider it CC if there are CC recipients and TO is not empty
+            # (someone else is the primary recipient)
+            return len(email.cc_addrs) > 0 and len(email.to_addrs) > 0
+        
+        user_lower = user_email.lower()
+        
+        # Get address strings
+        to_addrs_lower = [str(a).lower() for a in email.to_addrs] if email.to_addrs else []
+        cc_addrs_lower = [str(a).lower() for a in email.cc_addrs] if email.cc_addrs else []
+        
+        in_to = any(user_lower in addr for addr in to_addrs_lower)
+        in_cc = any(user_lower in addr for addr in cc_addrs_lower)
+        
+        # CC recipient = in CC list and not in TO list
+        return in_cc and not in_to
     
     def _parse_approval_response(self, content: str) -> ApprovalResult:
         """Parse LLM response into ApprovalResult."""
