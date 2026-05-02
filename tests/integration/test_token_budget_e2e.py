@@ -22,7 +22,7 @@ def test_token_budget_basic():
     print("\n📊 Token预算基础功能测试...")
     
     try:
-        from llm.token_budget_v2 import TokenBudgetV2, BudgetConfig
+        from llm.token_budget_v2 import TokenBudgetController, BudgetConfig
         
         # 创建预算控制器
         config = BudgetConfig(
@@ -32,7 +32,7 @@ def test_token_budget_basic():
             critical_threshold=0.95
         )
         
-        budget = TokenBudgetV2(config)
+        budget = TokenBudgetController(config)
         
         # 测试初始化
         assert budget.monthly_budget == 9.0
@@ -60,14 +60,14 @@ def test_budget_exceeded():
     print("\n📊 预算超限降级测试...")
     
     try:
-        from llm.token_budget_v2 import TokenBudgetV2, BudgetConfig, DegradationLevel
+        from llm.token_budget_v2 import TokenBudgetController, BudgetConfig, DegradationLevel
         
         config = BudgetConfig(
             monthly_budget_usd=0.01,  # 极低预算便于测试
             daily_budget_usd=0.005,
         )
         
-        budget = TokenBudgetV2(config)
+        budget = TokenBudgetController(config)
         
         # 模拟超限
         budget.record_usage(0.01, "test_model")
