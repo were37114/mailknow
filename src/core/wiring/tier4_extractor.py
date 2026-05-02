@@ -194,18 +194,23 @@ class Tier4Extractor:
             "需审批", "需批准", "待审批", "待批准",
             "立项审批", "预算审批", "合同审批", "费用审批",
             "审批启动", "审批流程",
+            "采购审批", "报销审批", "请假审批", "加班审批",
+            "权限审批", "差旅审批", "培训审批", "签核",
+            "紧急采购", "合规审查",
             # Shorter keywords last (lower priority)
             "请确认",
         ]
         
         # Notification keywords (not approval - these indicate completed/rejected)
-        # Checked FIRST, so they take priority over approval keywords
+        # Checked FIRST for direct recipients, but NOT for CC users
+        # (CC users getting "已通过" is a CC approval notification, not a direct notification)
         notification_keywords = [
             "审批已通过", "审批已拒绝", "审批未通过", "审批不通过",
-            "审批通过", "审批完成", "审批被拒", "审批已拒绝",
+            "审批通过", "审批完成", "审批被拒",
             "已审批通过", "已审批完成",
             "已审批", "已批准", "已同意",
-            "未通过", "不通过", "被拒",
+            "已驳回", "未批准", "已过期",
+            "已关闭", "已完成", "已开通",
             "approved",
         ]
         
@@ -213,22 +218,34 @@ class Tier4Extractor:
         subject_lower = subject.lower()
         content_lower = content.lower()
         
+        is_cc_user = self._is_cc_recipient(email, user_email)
+        is_system_forward = "系统转发" in content_lower or "系统转发" in subject_lower
+        
         # Check if it's a notification about completed approval
-        for kw in notification_keywords:
-            if kw in subject_lower or kw in content_lower:
-                return ApprovalResult(
-                    is_approval=False,
-                    confidence=0.8,
-                    approval_type="notification",
-                    reason=f"已完成审批通知: {kw}"
-                )
+        # For CC users, "已通过" means they're being notified as CC, not that it's a pure notification
+        if not is_cc_user:
+            for kw in notification_keywords:
+                if kw in subject_lower or kw in content_lower:
+                    return ApprovalResult(
+                        is_approval=False,
+                        confidence=0.8,
+                        approval_type="notification",
+                        reason=f"已完成审批通知: {kw}"
+                    )
+        
+        # Check for system-forwarded approvals
+        if is_system_forward:
+            return ApprovalResult(
+                is_approval=True,
+                confidence=0.7,
+                approval_type="system_forward",
+                reason="系统转发审批"
+            )
         
         # Check if it's an approval request
         # First, check for compound approval patterns (请...审批/批准/审核)
-        approval_action_words = ["审批", "批准", "签字", "审核"]
+        approval_action_words = ["审批", "批准", "签字", "审核", "签核"]
         request_words = ["请", "需要", "要求", "烦请", "恳请", "望", "需", "待"]
-        
-        is_cc_user = self._is_cc_recipient(email, user_email)
         
         for action in approval_action_words:
             for request in request_words:
@@ -245,7 +262,7 @@ class Tier4Extractor:
         
         # CC approval: user in CC + approval-related content (FYI, 抄送知会)
         if is_cc_user:
-            cc_indicators = ["审批", "批准", "审核", "预算", "合同", "立项"]
+            cc_indicators = ["审批", "批准", "审核", "预算", "合同", "立项", "采购", "报销", "请假", "加班", "权限"]
             for indicator in cc_indicators:
                 if indicator in subject_lower or indicator in content_lower:
                     return ApprovalResult(
@@ -264,6 +281,15 @@ class Tier4Extractor:
                     approval_type="cc" if is_cc_user else "direct",
                     reason=f"包含审批关键词: {kw}"
                 )
+        
+        # Fallback: subject contains "审批" and user is a direct recipient
+        if "审批" in subject_lower and not is_cc_user:
+            return ApprovalResult(
+                is_approval=True,
+                confidence=0.7,
+                approval_type="direct",
+                reason="主题包含审批关键词"
+            )
         
         return ApprovalResult(
             is_approval=False,
