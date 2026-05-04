@@ -53,7 +53,7 @@ def test_local_approval_classify_cc(tier4: Tier4Extractor):
         date=datetime(2024, 1, 1)
     )
 
-    result = tier4._local_approval_classify(email)
+    result = tier4._local_approval_classify(email, user_email="user@company.com")
 
     assert result.is_approval is True
     assert result.approval_type == "cc"

@@ -74,7 +74,7 @@ def test_cc_approval_low_confidence(tier4: Tier4Extractor):
         date=datetime(2024, 1, 1)
     )
 
-    result = tier4._local_approval_classify(email)
+    result = tier4._local_approval_classify(email, user_email="user@company.com")
 
     assert result.is_approval is True
     assert result.approval_type == "cc"
@@ -109,10 +109,10 @@ def test_system_forwarded_approval(tier4: Tier4Extractor):
         date=datetime(2024, 1, 1)
     )
 
-    result = tier4._local_approval_classify(email)
+    result = tier4._local_approval_classify(email, user_email="user@company.com")
 
     assert result.is_approval is True
-    assert result.approval_type == "direct"
+    assert result.approval_type == "system_forward"
 
 
 def test_confirmation_not_approval(tier4: Tier4Extractor):
