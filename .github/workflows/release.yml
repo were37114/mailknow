@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: MailKnow ${{ github.ref_name }}
+          body: |
+            MailKnow ${{ github.ref_name }} - 跨生态邮件知识引擎
+
+            ## 变更
+            详见 [CHANGELOG.md](https://github.com/were37114/mailknow/blob/main/CHANGELOG.md)
+
+            ## 安装
+            ```bash
+            pip install mailknow
+            ```
+
+            ## 校验
+            ```bash
+            pip install -e ".[dev]"
+            pytest tests/unit/ tests/integration/ tests/e2e/ -q
+            ```
+          files: dist/*
+          generate_release_notes: true
