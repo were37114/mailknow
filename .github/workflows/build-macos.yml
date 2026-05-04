@@ -1,0 +1,83 @@
+name: Build macOS Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build'
+        required: false
+        default: '1.0.0'
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        pip install fastapi uvicorn asyncpg pgvector python-multipart pydantic python-jose passlib bcrypt aioimaplib email-validator python-dateutil numpy sentence-transformers torch
+
+    - name: Build Python backend with PyInstaller
+      run: |
+        cd src/api
+        pyinstaller --name mailknow --onefile \
+          --add-data "../..:src" \
+          --hidden-import uvicorn.logging \
+          --hidden-import uvicorn.loops \
+          --hidden-import uvicorn.loops.auto \
+          --hidden-import uvicorn.protocols \
+          --hidden-import uvicorn.protocols.http \
+          --hidden-import uvicorn.protocols.http.auto \
+          --hidden-import uvicorn.protocols.websockets \
+          --hidden-import uvicorn.protocols.websockets.auto \
+          --hidden-import uvicorn.lifespan \
+          --hidden-import uvicorn.lifespan.on \
+          server.py
+        mv dist/mailknow ../../client/build/
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Electron dependencies
+      run: |
+        cd client
+        npm install
+
+    - name: Build Electron app
+      run: |
+        cd client
+        npm run build
+
+    - name: Package macOS DMG + ZIP
+      run: |
+        cd client
+        npx electron-builder --mac --publish never
+
+    - name: Upload macOS DMG
+      uses: actions/upload-artifact@v4
+      with:
+        name: MailKnow-macOS-DMG
+        path: client/release/*.dmg
+        retention-days: 7
+
+    - name: Upload macOS ZIP
+      uses: actions/upload-artifact@v4
+      with:
+        name: MailKnow-macOS-ZIP
+        path: client/release/*.zip
+        retention-days: 7
