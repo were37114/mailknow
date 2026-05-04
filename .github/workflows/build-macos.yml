@@ -46,6 +46,7 @@ jobs:
           --hidden-import uvicorn.lifespan \
           --hidden-import uvicorn.lifespan.on \
           server.py
+        mkdir -p ../../client/build
         mv dist/mailknow ../../client/build/
 
     - name: Setup Node.js
