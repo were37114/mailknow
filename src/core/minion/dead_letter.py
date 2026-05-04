@@ -10,10 +10,10 @@ V5.2 spec:
 import json
 import logging
 import uuid
-from typing import Optional, Dict, Any, List
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -37,23 +37,23 @@ class DeadLetterEntry:
     task_type: str = ""
     task_id: str = ""
     payload: Dict[str, Any] = field(default_factory=dict)
-    
+
     # Failure info
     reason: DeadLetterReason = DeadLetterReason.UNKNOWN
     error_message: str = ""
     original_error: str = ""
-    
+
     # Retry tracking
     retry_count: int = 0
     max_retries: int = 3
     last_retry_at: Optional[str] = None
-    
+
     # Timestamps
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     resolved: bool = False
     resolved_at: Optional[str] = None
     resolved_by: str = ""  # "retry" or "discard"
-    
+
     @property
     def can_retry(self) -> bool:
         """Whether this entry can be retried."""
@@ -62,7 +62,7 @@ class DeadLetterEntry:
 
 class DeadLetterQueue:
     """Dead letter queue for failed tasks.
-    
+
     Features:
     - Automatic entry on task failure
     - Retry with backoff
@@ -70,12 +70,12 @@ class DeadLetterQueue:
     - Manual retry/discard
     - Statistics
     """
-    
+
     def __init__(self, max_retries: int = 3):
         self.max_retries = max_retries
         self._entries: Dict[str, DeadLetterEntry] = {}
         self._alert_callbacks: List = []
-    
+
     def add(
         self,
         task_type: str,
@@ -95,50 +95,50 @@ class DeadLetterQueue:
             original_error=original_error,
             max_retries=self.max_retries,
         )
-        
+
         self._entries[entry.entry_id] = entry
-        
+
         # Alert
         logger.warning(
             f"Dead letter: {task_type}/{task_id} failed ({reason.value}): {error_message}"
         )
         self._fire_alert(entry)
-        
+
         return entry
-    
+
     def retry(self, entry_id: str) -> Optional[DeadLetterEntry]:
         """Mark entry for retry."""
         entry = self._entries.get(entry_id)
         if not entry:
             return None
-        
+
         if not entry.can_retry:
             logger.warning(f"Entry {entry_id} cannot be retried (retries={entry.retry_count}/{entry.max_retries})")
             return None
-        
+
         entry.retry_count += 1
         entry.last_retry_at = datetime.now(timezone.utc).isoformat()
-        
+
         logger.info(f"Retrying dead letter {entry_id} (attempt {entry.retry_count}/{entry.max_retries})")
         return entry
-    
+
     def resolve(self, entry_id: str, resolved_by: str = "retry") -> bool:
         """Mark entry as resolved."""
         entry = self._entries.get(entry_id)
         if not entry:
             return False
-        
+
         entry.resolved = True
         entry.resolved_at = datetime.now(timezone.utc).isoformat()
         entry.resolved_by = resolved_by
-        
+
         logger.info(f"Dead letter {entry_id} resolved by {resolved_by}")
         return True
-    
+
     def discard(self, entry_id: str) -> bool:
         """Discard a dead letter entry (mark as resolved by discard)."""
         return self.resolve(entry_id, resolved_by="discard")
-    
+
     def discard_all_resolved(self) -> int:
         """Remove all resolved entries."""
         resolved_ids = [
@@ -148,23 +148,23 @@ class DeadLetterQueue:
         for eid in resolved_ids:
             del self._entries[eid]
         return len(resolved_ids)
-    
+
     def get_pending(self) -> List[DeadLetterEntry]:
         """Get all unresolved entries."""
         return [e for e in self._entries.values() if not e.resolved]
-    
+
     def get_retryable(self) -> List[DeadLetterEntry]:
         """Get entries that can be retried."""
         return [e for e in self._entries.values() if e.can_retry]
-    
+
     def get_entry(self, entry_id: str) -> Optional[DeadLetterEntry]:
         """Get a specific entry."""
         return self._entries.get(entry_id)
-    
+
     def on_alert(self, callback):
         """Register alert callback."""
         self._alert_callbacks.append(callback)
-    
+
     def _fire_alert(self, entry: DeadLetterEntry):
         """Fire alert callbacks."""
         for cb in self._alert_callbacks:
@@ -172,21 +172,21 @@ class DeadLetterQueue:
                 cb(entry)
             except Exception as e:
                 logger.error(f"Alert callback error: {e}")
-    
+
     def get_stats(self) -> Dict[str, Any]:
         """Get dead letter queue statistics."""
         entries = list(self._entries.values())
         pending = [e for e in entries if not e.resolved]
         retryable = [e for e in entries if e.can_retry]
-        
+
         by_reason: Dict[str, int] = {}
         for e in entries:
             by_reason[e.reason.value] = by_reason.get(e.reason.value, 0) + 1
-        
+
         by_type: Dict[str, int] = {}
         for e in entries:
             by_type[e.task_type] = by_type.get(e.task_type, 0) + 1
-        
+
         return {
             "total": len(entries),
             "pending": len(pending),

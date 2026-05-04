@@ -1,6 +1,6 @@
 """Entity module - identity management and alignment."""
 
-from .aligner import EntityAligner, MergeReason, MergeRecord, AlignmentResult
+from .aligner import AlignmentResult, EntityAligner, MergeReason, MergeRecord
 
 __all__ = [
     "EntityAligner",

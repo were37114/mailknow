@@ -8,10 +8,10 @@ This module provides a wrapper that handles the ID requirement.
 """
 
 import imaplib
-import ssl
 import logging
-from typing import Optional, List, Tuple
+import ssl
 from contextlib import contextmanager
+from typing import List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +79,7 @@ class IMAP163Connector:
         if self._client:
             try:
                 self._client.logout()
-            except:
+            except Exception:
                 pass
             finally:
                 self._client = None

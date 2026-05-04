@@ -11,13 +11,15 @@ This module provides stage-specific recommendation strategies.
 """
 
 import logging
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
 
 from .recommender import (
-    SceneType, SceneCard, ColdStartStage, 
+    ColdStartStage,
     RecommendationBoundary,
+    SceneCard,
+    SceneType,
 )
 
 logger = logging.getLogger(__name__)
@@ -77,82 +79,82 @@ STAGE_STRATEGIES: Dict[ColdStartStage, StageStrategy] = {
 
 class ColdStartManager:
     """Manage cold start stage transitions and strategies.
-    
+
     Features:
     - Track stage progression based on usage history
     - Apply stage-specific recommendation strategies
     - Smooth transitions between stages
     """
-    
+
     def __init__(self):
         self._first_use: Optional[str] = None
         self._first_import: Optional[str] = None
         self._email_count = 0
         self._feedback_count = 0
-    
+
     def set_first_use(self, date: Optional[str] = None):
         """Record first use date."""
         self._first_use = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    
+
     def set_first_import(self, date: Optional[str] = None, email_count: int = 0):
         """Record first import."""
         self._first_import = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
         self._email_count = email_count
-    
+
     def record_email_count(self, count: int):
         """Update email count."""
         self._email_count = count
-    
+
     def record_feedback(self):
         """Record a feedback event."""
         self._feedback_count += 1
-    
+
     def get_stage(self) -> ColdStartStage:
         """Determine current cold start stage."""
         now = datetime.now(timezone.utc)
-        
+
         if not self._first_use:
             return ColdStartStage.DAY_1
-        
+
         try:
             first_use_dt = datetime.fromisoformat(self._first_use + "T00:00:00+00:00")
             days = (now - first_use_dt).days
         except ValueError:
             days = 0
-        
+
         if not self._first_import:
             return ColdStartStage.DAY_1
-        
+
         if days < 7:
             return ColdStartStage.POST_IMPORT
         elif days < 30:
             return ColdStartStage.WEEK_1
         else:
             return ColdStartStage.MONTH_1
-    
+
     def get_strategy(self) -> StageStrategy:
         """Get current stage's strategy."""
         stage = self.get_stage()
         return STAGE_STRATEGIES[stage]
-    
+
     def is_scene_enabled(self, scene_type: SceneType) -> bool:
         """Check if a scene type is enabled for current stage."""
         strategy = self.get_strategy()
         return scene_type in strategy.enabled_scenes
-    
+
     def get_max_daily_cards(self) -> int:
         """Get max daily cards for current stage."""
         return self.get_strategy().max_daily_cards
-    
+
     def get_confidence_threshold(self) -> float:
         """Get confidence threshold for current stage."""
         return self.get_strategy().confidence_threshold
-    
+
     def get_stage_info(self) -> Dict[str, Any]:
         """Get full stage info for UI display."""
         stage = self.get_stage()
         strategy = self.get_strategy()
-        
+
         return {
             "stage": stage.value,
             "description": strategy.description,

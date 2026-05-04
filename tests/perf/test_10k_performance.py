@@ -7,23 +7,23 @@ Validates:
 - Embedding batch processing throughput
 """
 
-import pytest
 import asyncio
 import json
-import time
-import tempfile
-from pathlib import Path
-from datetime import datetime, timezone, timedelta
 import random
 import string
+import tempfile
+import time
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
-from sync.models import Email, EmailAddress
-from core.gate.classifier import GateClassifier, EmailInfo
+import pytest
+
+from core.gate.classifier import EmailInfo, GateClassifier
 from core.pipeline import EmailPipeline
-from core.search.hybrid import HybridSearch, SearchWeights, SearchOptions
 from core.search.batch_embedding import BatchEmbeddingQueue
+from core.search.hybrid import HybridSearch, SearchOptions, SearchWeights
 from db.pgpool import SQLitePool
-
+from sync.models import Email, EmailAddress
 
 # ===== Data Generator =====
 
@@ -61,11 +61,11 @@ def generate_email(index: int) -> Email:
         subject = random.choice(SUBJECTS_NOTIFICATION)
     else:
         subject = random.choice(SUBJECTS_SPAM)
-    
+
     sender_name = random.choice(NAMES_CN)
     sender_domain = random.choice(DOMAINS)
     sender_addr = f"{sender_name.lower()}@{sender_domain}"
-    
+
     return Email(
         message_id=f"<perf{index:06d}@{sender_domain}>",
         subject=f"{subject} #{index}",
@@ -94,14 +94,14 @@ class TestPerformance10K:
             db = SQLitePool(data_dir=Path(d))
             await db.start()
             await db.init_schema()
-            
+
             pipeline = EmailPipeline(db=db)
-            
+
             # Generate and insert 10K emails
             start_time = time.time()
-            
+
             emails = [generate_email(i) for i in range(10000)]
-            
+
             # Process in batches of 100
             for batch_start in range(0, 10000, 100):
                 batch = emails[batch_start:batch_start + 100]
@@ -111,20 +111,20 @@ class TestPerformance10K:
                     folder="INBOX",
                     start_uid=batch_start,
                 )
-                
+
                 # Count errors
                 errors = [r for r in results if r.error is not None]
                 assert len(errors) == 0, f"Errors in batch {batch_start}: {[r.error for r in errors]}"
-            
+
             elapsed = time.time() - start_time
-            
+
             # Verify count
             conn = await db.get_connection()
             cursor = await conn.execute("SELECT COUNT(*) FROM pages WHERE type = 'email'")
             count = (await cursor.fetchone())[0]
-            
+
             await db.stop()
-            
+
             # Assertions
             assert count == 10000, f"Expected 10000, got {count}"
             assert elapsed < 120, f"Insertion took {elapsed:.1f}s, expected < 120s"
@@ -134,7 +134,7 @@ class TestPerformance10K:
     async def test_gate_classification_performance(self):
         """Test Gate classification speed."""
         classifier = GateClassifier()
-        
+
         emails = [
             EmailInfo(
                 subject=random.choice(SUBJECTS_URGENT + SUBJECTS_IMPORTANT + SUBJECTS_ROUTINE),
@@ -144,25 +144,25 @@ class TestPerformance10K:
             )
             for _ in range(1000)
         ]
-        
+
         start_time = time.time()
         for email_info in emails:
             classifier.classify(email_info)
         elapsed = time.time() - start_time
-        
+
         per_email_ms = elapsed / 1000 * 1000
-        
+
         assert per_email_ms < 10, f"Gate classification took {per_email_ms:.2f}ms, expected < 10ms"
         print(f"\n✅ Gate classification: {per_email_ms:.2f}ms per email ({1000/elapsed:.0f} emails/s)")
 
     def test_search_performance_sync(self):
         """Test keyword search response time (sync, no deadlock risk)."""
         import sqlite3
-        
+
         with tempfile.TemporaryDirectory() as d:
             db_path = str(Path(d) / "mailknow.db")
             conn = sqlite3.connect(db_path)
-            
+
             # Create tables
             conn.executescript("""
                 CREATE TABLE IF NOT EXISTS pages (
@@ -170,7 +170,7 @@ class TestPerformance10K:
                     gate_class TEXT DEFAULT 'routine', created_at TEXT, updated_at TEXT
                 );
             """)
-            
+
             now = datetime.now(timezone.utc).isoformat()
             for i in range(200):
                 metadata = json.dumps({
@@ -183,7 +183,7 @@ class TestPerformance10K:
                     (f"email:search{i}", f"{subject} #{i}", metadata, now, now)
                 )
             conn.commit()
-            
+
             # Keyword search benchmark
             queries = ["项目", "紧急", "审批", "会议", "服务器"]
             times = []
@@ -191,7 +191,7 @@ class TestPerformance10K:
                 keywords = query.split()
                 like_conditions = " OR ".join(["content LIKE ?" for _ in keywords])
                 like_params = [f"%{kw}%" for kw in keywords]
-                
+
                 start_time = time.time()
                 for _ in range(10):  # 10 iterations
                     conn.execute(
@@ -200,12 +200,12 @@ class TestPerformance10K:
                     ).fetchall()
                 elapsed_ms = (time.time() - start_time) / 10 * 1000
                 times.append(elapsed_ms)
-            
+
             conn.close()
-            
+
             avg_time = sum(times) / len(times)
             max_time = max(times)
-            
+
             assert max_time < 500, f"Max search time {max_time:.0f}ms, expected < 500ms"
             print(f"\n✅ Search performance: avg={avg_time:.1f}ms, max={max_time:.1f}ms")
 
@@ -216,7 +216,7 @@ class TestPerformance10K:
             db = SQLitePool(data_dir=Path(d))
             await db.start()
             await db.init_schema()
-            
+
             # Create mock embedding model
             from unittest.mock import MagicMock
             mock_model = MagicMock()
@@ -226,9 +226,9 @@ class TestPerformance10K:
             )
             mock_model.embedding_to_bytes = MagicMock(side_effect=lambda x: x.tobytes())
             mock_model.dimension = 512
-            
+
             queue = BatchEmbeddingQueue(db=db, embedding_model=mock_model, batch_size=32)
-            
+
             # Insert pages
             conn = await db.get_connection()
             now = datetime.now(timezone.utc).isoformat()
@@ -238,20 +238,20 @@ class TestPerformance10K:
                     (f"email:emb{i}", f"内容{i}", now, now)
                 )
             await conn.commit()
-            
+
             # Enqueue
             start_time = time.time()
             for i in range(100):
                 await queue.enqueue(f"email:emb{i}", f"内容{i}", "routine")
-            
+
             # Process
             processed = await queue.process_now()
             elapsed = time.time() - start_time
-            
+
             progress = await queue.get_progress()
-            
+
             await db.stop()
-            
+
             assert processed >= 1  # At least one batch processed
             assert progress.completed > 0
             print(f"\n✅ Embedding throughput: {progress.completed} in {elapsed:.1f}s")

@@ -1,18 +1,19 @@
 """Tests for HybridSearch V2: RRF weights + metadata + pagination."""
 
-import pytest
 import json
 import tempfile
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
 from unittest.mock import MagicMock, patch
+
 import numpy as np
+import pytest
 
 from core.search.hybrid import (
     HybridSearch,
+    SearchOptions,
     SearchResult,
     SearchWeights,
-    SearchOptions,
 )
 from db.pgpool import SQLitePool
 
@@ -63,11 +64,11 @@ async def _insert_email(db, page_id, subject, from_addr, content, gate_class="ro
         "to_addrs": ["me@company.com"],
         "date": now,
     }, ensure_ascii=False)
-    
+
     emb_bytes = bytes(2048) if embedding else None
-    
+
     await conn.execute(
-        """INSERT OR IGNORE INTO pages 
+        """INSERT OR IGNORE INTO pages
            (id, type, content, metadata, gate_class, embedding, created_at, updated_at)
            VALUES (?, 'email', ?, ?, ?, ?, ?, ?)""",
         (page_id, subject, metadata, gate_class, emb_bytes, now, now)
@@ -119,7 +120,7 @@ class TestHybridSearch:
     async def test_search_returns_tuple(self, search, db):
         """Test that search returns (results, total) tuple."""
         await _insert_email(db, "email:s1", "项目讨论", "zhangsan@test.com", "项目讨论内容")
-        
+
         results, total = await search.search("项目")
         assert isinstance(results, list)
         assert isinstance(total, int)
@@ -129,7 +130,7 @@ class TestHybridSearch:
         """Test keyword search finds matching content."""
         await _insert_email(db, "email:kw1", "项目讨论", "zhangsan@test.com", "关于项目进度")
         await _insert_email(db, "email:kw2", "会议通知", "lisi@test.com", "明天开会")
-        
+
         results, total = await search.search("项目")
         # Should find at least the email containing "项目"
         assert total >= 1
@@ -139,10 +140,10 @@ class TestHybridSearch:
         """Test gate filter works."""
         await _insert_email(db, "email:gf1", "紧急服务器告警", "ops@test.com", "紧急", "urgent")
         await _insert_email(db, "email:gf2", "日常讨论", "dev@test.com", "讨论", "routine")
-        
+
         options = SearchOptions(gate_filter=["urgent"])
         results, total = await search.search("讨论", options)
-        
+
         # All results should be urgent
         for r in results:
             assert r.gate_class == "urgent"
@@ -152,16 +153,16 @@ class TestHybridSearch:
         """Test pagination works."""
         for i in range(15):
             await _insert_email(db, f"email:page{i}", f"项目{i}", f"sender{i}@test.com", f"项目内容{i}")
-        
+
         # Page 1
         opts1 = SearchOptions(limit=5, offset=0)
         results1, total1 = await search.search("项目", opts1)
         assert len(results1) <= 5
-        
+
         # Page 2
         opts2 = SearchOptions(limit=5, offset=5)
         results2, total2 = await search.search("项目", opts2)
-        
+
         # Total should be the same
         assert total1 == total2
 
@@ -170,7 +171,7 @@ class TestHybridSearch:
         """Test metadata search finds sender."""
         await _insert_email(db, "email:meta1", "项目进度", "zhangsan@company.com", "讨论项目")
         await _insert_email(db, "email:meta2", "会议通知", "lisi@company.com", "开会讨论")
-        
+
         results, total = await search.search("zhangsan")
         assert total >= 1
 
@@ -185,7 +186,7 @@ class TestHybridSearch:
     async def test_search_result_has_scores(self, search, db, mock_embedding):
         """Test results have individual score breakdown."""
         await _insert_email(db, "email:score1", "项目进度", "test@test.com", "项目讨论")
-        
+
         results, _ = await search.search("项目")
         if results:
             r = results[0]
@@ -198,7 +199,7 @@ class TestHybridSearch:
         """Test weighted RRF fusion."""
         # High vector weight should favor vector results
         search.weights = SearchWeights(vector_weight=2.0, keyword_weight=0.5)
-        
+
         await _insert_email(db, "email:w1", "测试邮件", "test@test.com", "内容")
         results, _ = await search.search("测试")
         # Should still return results

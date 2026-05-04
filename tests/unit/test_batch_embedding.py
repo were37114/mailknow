@@ -1,11 +1,12 @@
 """Tests for BatchEmbeddingQueue: async embedding with progress tracking."""
 
-import pytest
 import asyncio
 import tempfile
-from pathlib import Path
 from datetime import datetime, timezone
-from unittest.mock import MagicMock, AsyncMock, patch
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from core.search.batch_embedding import (
     BatchEmbeddingQueue,
@@ -106,7 +107,7 @@ class TestBatchEmbeddingQueue:
         await _insert_page(db, "email:test1", "邮件内容", "routine")
         result = await queue.enqueue("email:test1", "邮件内容", "routine")
         assert result is True
-        
+
         progress = await queue.get_progress()
         assert progress.pending == 1
 
@@ -116,7 +117,7 @@ class TestBatchEmbeddingQueue:
         await _insert_page(db, "email:spam1", "垃圾邮件", "spam")
         result = await queue.enqueue("email:spam1", "垃圾邮件", "spam")
         assert result is True
-        
+
         progress = await queue.get_progress()
         assert progress.skipped == 1
         assert progress.pending == 0
@@ -127,7 +128,7 @@ class TestBatchEmbeddingQueue:
         await _insert_page(db, "email:notif1", "通知邮件", "notification")
         result = await queue.enqueue("email:notif1", "通知邮件", "notification")
         assert result is True
-        
+
         progress = await queue.get_progress()
         assert progress.skipped == 1
 
@@ -141,10 +142,10 @@ class TestBatchEmbeddingQueue:
         ]
         for item in items:
             await _insert_page(db, item["page_id"], item["content"], item["gate_class"])
-        
+
         count = await queue.enqueue_batch(items)
         assert count == 3
-        
+
         progress = await queue.get_progress()
         assert progress.pending == 2  # routine + important
         assert progress.skipped == 1  # spam
@@ -159,12 +160,12 @@ class TestBatchEmbeddingQueue:
         ]
         for item in items:
             await _insert_page(db, item["page_id"], item["content"], item["gate_class"])
-        
+
         await queue.enqueue_batch(items)
-        
+
         processed = await queue.process_now()
         assert processed == 3
-        
+
         progress = await queue.get_progress()
         assert progress.completed == 3
         assert progress.pending == 0
@@ -174,11 +175,11 @@ class TestBatchEmbeddingQueue:
         """Test progress callback is called after processing."""
         callbacks = []
         queue.on_progress(lambda p: callbacks.append(p))
-        
+
         await _insert_page(db, "email:cb1", "内容", "routine")
         await queue.enqueue("email:cb1", "内容", "routine")
         await queue.process_now()
-        
+
         assert len(callbacks) >= 1
 
     @pytest.mark.asyncio
@@ -191,10 +192,10 @@ class TestBatchEmbeddingQueue:
             ("email:fail1", "内容", "routine", "failed", 1, "test error")
         )
         await conn.commit()
-        
+
         retried = await queue.retry_failed()
         assert retried == 1
-        
+
         progress = await queue.get_progress()
         assert progress.pending == 1
         assert progress.failed == 0
@@ -211,10 +212,10 @@ class TestBatchEmbeddingQueue:
             ("email:emb1", "已有向量", emb_bytes, now, now)
         )
         await conn.commit()
-        
+
         result = await queue.enqueue("email:emb1", "已有向量", "routine")
         assert result is True
-        
+
         # Should not add to queue
         progress = await queue.get_progress()
         assert progress.total == 0
@@ -224,9 +225,9 @@ class TestBatchEmbeddingQueue:
         """Test starting and stopping the queue."""
         await queue.start()
         assert queue.is_running is True
-        
+
         await asyncio.sleep(0.1)
-        
+
         await queue.stop()
         assert queue.is_running is False
 
@@ -235,9 +236,9 @@ class TestBatchEmbeddingQueue:
         """Test that long content is truncated."""
         long_content = "A" * 5000
         await _insert_page(db, "email:long1", long_content, "routine")
-        
+
         await queue.enqueue("email:long1", long_content, "routine")
-        
+
         conn = await db.get_connection()
         cursor = await conn.execute(
             "SELECT content FROM embedding_queue WHERE page_id = ?",

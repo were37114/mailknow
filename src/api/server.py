@@ -6,22 +6,22 @@ Supports all routes for Gate, Search, Approval, Report, Scene, Settings.
 
 import logging
 import os
-from typing import Optional
 from contextlib import asynccontextmanager
+from typing import Optional
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from db.pgpool import SQLitePool
 from core.gate.classifier import GateClassifier
 from core.search.hybrid import HybridSearch
-from scenes.approval.detector import ApprovalDetector
-from scenes.approval.actions import ApprovalActions
-from scenes.report.generator import ReportGenerator, ReportScheduler
-from scenes.recommender import SceneRecommender
+from db.pgpool import SQLitePool
 from llm.client import get_llm_client
-from llm.token_budget_v2 import TokenBudgetController
 from llm.fallback import get_fallback
+from llm.token_budget_v2 import TokenBudgetController
+from scenes.approval.actions import ApprovalActions
+from scenes.approval.detector import ApprovalDetector
+from scenes.recommender import SceneRecommender
+from scenes.report.generator import ReportGenerator, ReportScheduler
 
 logger = logging.getLogger(__name__)
 

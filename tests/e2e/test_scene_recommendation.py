@@ -14,20 +14,24 @@ E2E场景推荐测试
 日期：2026-05-02
 """
 
-import pytest
-from datetime import datetime, timezone, timedelta
+import os
+import sys
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
-import sys
-import os
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
+from scenes.cold_start import STAGE_STRATEGIES, ColdStartManager
 from scenes.recommender import (
-    SceneRecommender, SceneCard, SceneType, FeedbackType,
-    ColdStartStage, RecommendationBoundary,
+    ColdStartStage,
+    FeedbackType,
+    RecommendationBoundary,
+    SceneCard,
+    SceneRecommender,
+    SceneType,
 )
-from scenes.cold_start import ColdStartManager, STAGE_STRATEGIES
-
 
 # ── Fixtures ──
 

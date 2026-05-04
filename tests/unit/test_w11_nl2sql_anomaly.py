@@ -1,11 +1,12 @@
 """Tests for W11: NL→SQL + Anomaly detection."""
 
-import pytest
-from datetime import datetime, timezone, timedelta
-from unittest.mock import MagicMock, patch, AsyncMock
+from datetime import datetime, timedelta, timezone
+from unittest.mock import AsyncMock, MagicMock, patch
 
-from core.search.nl2sql import NL2SQLTranslator, NL2SQLResult
-from scenes.anomaly.detector import AnomalyDetector, Anomaly, AnomalyType
+import pytest
+
+from core.search.nl2sql import NL2SQLResult, NL2SQLTranslator
+from scenes.anomaly.detector import Anomaly, AnomalyDetector, AnomalyType
 
 
 class TestNL2SQLTranslator:

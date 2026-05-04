@@ -15,24 +15,35 @@ E2E审批闭环测试
 日期：2026-05-02
 """
 
-import pytest
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
-from datetime import datetime, timezone
-
-import sys
 import os
+import sys
+from datetime import datetime, timezone
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
-from core.gate.classifier import GateClassifier, EmailInfo
+from core.gate.classifier import EmailInfo, GateClassifier
 from core.gate.models import GateClass
-from scenes.approval.detector import ApprovalDetector, ApprovalType, ConfidenceLevel, ApprovalDetection
 from scenes.approval.actions import (
-    ApprovalActions, ApprovalCard, ApprovalStatus, ApprovalAction,
-    AmountCategory, classify_amount, ConfirmationRequiredError, BatchApprovalResult,
+    AmountCategory,
+    ApprovalAction,
+    ApprovalActions,
+    ApprovalCard,
+    ApprovalStatus,
+    BatchApprovalResult,
+    ConfirmationRequiredError,
+    classify_amount,
+)
+from scenes.approval.detector import (
+    ApprovalDetection,
+    ApprovalDetector,
+    ApprovalType,
+    ConfidenceLevel,
 )
 from sync.models import Email, EmailAddress
-
 
 # ── Fixtures ──
 

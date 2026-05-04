@@ -1,12 +1,13 @@
 """Tests for approval detection."""
 
-import pytest
 from datetime import datetime
-from unittest.mock import Mock, AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
-from scenes.approval import ApprovalDetector, ApprovalDetection, ApprovalType, ConfidenceLevel
-from core.wiring import Tier4Extractor, ApprovalResult
-from core.gate import GateClassifier, GateClass
+import pytest
+
+from core.gate import GateClass, GateClassifier
+from core.wiring import ApprovalResult, Tier4Extractor
+from scenes.approval import ApprovalDetection, ApprovalDetector, ApprovalType, ConfidenceLevel
 from sync.models import Email, EmailAddress
 
 
@@ -32,9 +33,9 @@ def test_local_approval_classify_direct(tier4: Tier4Extractor):
         text_body="请审批附件中的合同，谢谢",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is True
     assert result.approval_type == "direct"
     assert result.confidence > 0.7
@@ -51,9 +52,9 @@ def test_local_approval_classify_cc(tier4: Tier4Extractor):
         text_body="请审批合同",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is True
     assert result.approval_type == "cc"
     assert result.confidence < 0.8  # Lower confidence for CC
@@ -69,9 +70,9 @@ def test_local_approval_classify_notification(tier4: Tier4Extractor):
         text_body="您的审批已通过",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is False
     assert result.approval_type == "notification"
 
@@ -86,9 +87,9 @@ def test_local_approval_classify_routine(tier4: Tier4Extractor):
         text_body="本周项目进展顺利",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is False
     assert result.approval_type == "none"
 
@@ -98,16 +99,16 @@ def test_parse_approval_response(tier4: Tier4Extractor):
     # Valid JSON
     response = '{"is_approval": true, "confidence": 0.9, "approval_type": "direct", "reason": "包含审批关键词"}'
     result = tier4._parse_approval_response(response)
-    
+
     assert result.is_approval is True
     assert result.confidence == 0.9
     assert result.approval_type == "direct"
-    
+
     # Invalid JSON
     result = tier4._parse_approval_response("not json")
     assert result.is_approval is False
     assert result.approval_type == "none"
-    
+
     # JSON in code block
     response = '```json\n{"is_approval": false, "confidence": 0.8, "approval_type": "none", "reason": "test"}\n```'
     result = tier4._parse_approval_response(response)
@@ -118,7 +119,7 @@ def test_truncate_content(tier4: Tier4Extractor):
     """Test content truncation."""
     short = "short content"
     assert tier4._truncate_content(short, max_chars=100) == short
-    
+
     long_content = "a" * 2000
     result = tier4._truncate_content(long_content, max_chars=1000)
     assert len(result) <= 1003  # 1000 + "..."
@@ -136,7 +137,7 @@ def test_approval_result_needs_action():
         gate_class=GateClass.IMPORTANT,
     )
     assert direct.needs_action is True
-    
+
     # CC approval doesn't need action (regardless of confidence)
     cc = ApprovalDetection(
         is_approval=True,
@@ -146,7 +147,7 @@ def test_approval_result_needs_action():
         gate_class=GateClass.ROUTINE,
     )
     assert cc.needs_action is False
-    
+
     # Notification doesn't need action
     notification = ApprovalDetection(
         is_approval=False,
@@ -156,7 +157,7 @@ def test_approval_result_needs_action():
         gate_class=GateClass.NOTIFICATION,
     )
     assert notification.needs_action is False
-    
+
     # Direct low-confidence doesn't need action
     low = ApprovalDetection(
         is_approval=True,
@@ -179,9 +180,9 @@ async def test_detector_spam_rejection(detector: ApprovalDetector):
         text_body="恭喜您中奖了！点击领取",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = await detector.detect(email)
-    
+
     assert result.is_approval is False
     assert result.gate_class == GateClass.SPAM
 
@@ -197,9 +198,9 @@ async def test_detector_direct_approval(detector: ApprovalDetector):
         text_body="请审批附件中的项目预算方案",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = await detector.detect(email)
-    
+
     assert result.is_approval is True
 
 
@@ -214,7 +215,7 @@ async def test_detector_routine_email(detector: ApprovalDetector):
         text_body="我们讨论一下项目的下一步计划",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = await detector.detect(email)
-    
+
     assert result.is_approval is False

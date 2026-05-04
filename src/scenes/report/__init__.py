@@ -1,6 +1,6 @@
 """Report scene module."""
 
-from .generator import ReportGenerator, WeeklyReport, ReportSection
+from .generator import ReportGenerator, ReportSection, WeeklyReport
 
 __all__ = [
     "ReportGenerator",

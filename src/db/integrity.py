@@ -9,10 +9,10 @@ V5.2 spec:
 
 import json
 import logging
-from typing import Optional, Dict, Any, List, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ class IntegrityReport:
     issues_by_severity: Dict[str, int] = field(default_factory=dict)
     auto_fixed: int = 0
     scan_duration_ms: float = 0.0
-    
+
     @property
     def has_critical(self) -> bool:
         return any(i.severity == "critical" for i in self.issues)
@@ -60,88 +60,88 @@ class IntegrityReport:
 
 class IntegrityChecker:
     """Data integrity checker.
-    
+
     V5.2 important rule:
     - spam/notification emails naturally have no links
     - Don't report them as orphan pages
     - Only check important/urgent/routine emails
     """
-    
+
     # Gate classes that naturally have no links - exclude from orphan check
     EXCLUDED_GATE_CLASSES = {"spam", "notification"}
-    
+
     def __init__(self, db=None):
         self.db = db
-    
+
     async def check(self, auto_fix: bool = False) -> IntegrityReport:
         """Run integrity check.
-        
+
         Args:
             auto_fix: Auto-fix issues where possible
-            
+
         Returns:
             Integrity report
         """
         start = datetime.now(timezone.utc)
         report = IntegrityReport()
-        
+
         if not self.db:
             logger.warning("No database available for integrity check")
             return report
-        
+
         try:
             conn = await self.db.get_connection()
-            
+
             # Count totals
             cursor = await conn.execute("SELECT COUNT(*) FROM pages")
             row = await cursor.fetchone()
             report.total_pages = row[0] if row else 0
-            
+
             cursor = await conn.execute("SELECT COUNT(*) FROM links")
             row = await cursor.fetchone()
             report.total_links = row[0] if row else 0
-            
+
             cursor = await conn.execute("SELECT COUNT(*) FROM entities")
             row = await cursor.fetchone()
             report.total_entities = row[0] if row else 0
-            
+
             # Check 1: Orphan pages (EXCLUDE spam/notification)
             await self._check_orphan_pages(conn, report, auto_fix)
-            
+
             # Check 2: Broken links
             await self._check_broken_links(conn, report, auto_fix)
-            
+
             # Check 3: Stale entities
             await self._check_stale_entities(conn, report)
-            
+
             # Check 4: Missing entity pages
             await self._check_missing_entity_pages(conn, report, auto_fix)
-            
+
             # Check 5: Empty metadata
             await self._check_empty_metadata(conn, report)
-            
+
             await conn.commit()
-            
+
         except Exception as e:
             logger.error(f"Integrity check failed: {e}")
-        
+
         # Summarize
         for issue in report.issues:
             report.issues_by_type[issue.issue_type.value] = \
                 report.issues_by_type.get(issue.issue_type.value, 0) + 1
             report.issues_by_severity[issue.severity] = \
                 report.issues_by_severity.get(issue.severity, 0) + 1
-        
+
         report.auto_fixed = len([i for i in report.issues if i.fixed])
         report.scan_duration_ms = (datetime.now(timezone.utc) - start).total_seconds() * 1000
-        
+
         logger.info(
             f"Integrity check: {len(report.issues)} issues "
             f"({report.auto_fixed} auto-fixed) in {report.scan_duration_ms:.0f}ms"
         )
-        
+
         return report
-    
+
     async def _check_orphan_pages(self, conn, report: IntegrityReport, auto_fix: bool):
         """Check for pages with no links (excluding spam/notification)."""
         # Find email pages that should have links but don't
@@ -155,7 +155,7 @@ class IntegrityChecker:
                   WHERE l.source_id = p.id OR l.target_id = p.id
               )
         """)
-        
+
         rows = await cursor.fetchall()
         for row in rows:
             page_id, gate_class = row[0], row[1]
@@ -167,7 +167,7 @@ class IntegrityChecker:
                 suggested_fix="重新运行 Tier1-2 提取",
                 auto_fixable=False,
             ))
-    
+
     async def _check_broken_links(self, conn, report: IntegrityReport, auto_fix: bool):
         """Check for links with non-existent source or target."""
         # Broken source
@@ -176,7 +176,7 @@ class IntegrityChecker:
             FROM links l
             WHERE NOT EXISTS (SELECT 1 FROM pages p WHERE p.id = l.source_id)
         """)
-        
+
         rows = await cursor.fetchall()
         for row in rows:
             link_id, source_id = row[0], row[1]
@@ -188,13 +188,13 @@ class IntegrityChecker:
                 suggested_fix="删除孤立链接",
                 auto_fixable=True,
             )
-            
+
             if auto_fix:
                 await conn.execute("DELETE FROM links WHERE id = ?", (link_id,))
                 issue.fixed = True
-            
+
             report.issues.append(issue)
-        
+
         # Broken target (NULL target is OK - stub)
         cursor = await conn.execute("""
             SELECT l.id, l.target_id
@@ -202,7 +202,7 @@ class IntegrityChecker:
             WHERE l.target_id IS NOT NULL
               AND NOT EXISTS (SELECT 1 FROM pages p WHERE p.id = l.target_id)
         """)
-        
+
         rows = await cursor.fetchall()
         for row in rows:
             link_id, target_id = row[0], row[1]
@@ -214,7 +214,7 @@ class IntegrityChecker:
                 suggested_fix="创建stub页面或删除链接",
                 auto_fixable=True,
             )
-            
+
             if auto_fix:
                 # Create stub page for the target
                 page_type = target_id.split(":")[0] if ":" in target_id else "unknown"
@@ -224,9 +224,9 @@ class IntegrityChecker:
                     (target_id, page_type, name, datetime.now(timezone.utc).isoformat(), datetime.now(timezone.utc).isoformat())
                 )
                 issue.fixed = True
-            
+
             report.issues.append(issue)
-    
+
     async def _check_stale_entities(self, conn, report: IntegrityReport):
         """Check for entities with no recent links."""
         cursor = await conn.execute("""
@@ -237,7 +237,7 @@ class IntegrityChecker:
             GROUP BY e.id
             HAVING last_activity IS NULL OR last_activity < datetime('now', '-30 days')
         """)
-        
+
         rows = await cursor.fetchall()
         for row in rows:
             entity_id, name, last_activity = row[0], row[1], row[2]
@@ -249,7 +249,7 @@ class IntegrityChecker:
                 suggested_fix="可考虑归档",
                 auto_fixable=False,
             ))
-    
+
     async def _check_missing_entity_pages(self, conn, report: IntegrityReport, auto_fix: bool):
         """Check for entities referenced in links but missing from entities table."""
         cursor = await conn.execute("""
@@ -258,7 +258,7 @@ class IntegrityChecker:
             WHERE l.target_id LIKE 'person:%'
               AND NOT EXISTS (SELECT 1 FROM entities e WHERE e.id = l.target_id)
         """)
-        
+
         rows = await cursor.fetchall()
         for row in rows:
             entity_id = row[0]
@@ -271,23 +271,23 @@ class IntegrityChecker:
                 suggested_fix="创建实体记录",
                 auto_fixable=True,
             )
-            
+
             if auto_fix:
                 await conn.execute(
                     "INSERT OR IGNORE INTO entities (id, type, name, attributes, created_at, updated_at) VALUES (?, 'person', ?, '{}', ?, ?)",
                     (entity_id, name, datetime.now(timezone.utc).isoformat(), datetime.now(timezone.utc).isoformat())
                 )
                 issue.fixed = True
-            
+
             report.issues.append(issue)
-    
+
     async def _check_empty_metadata(self, conn, report: IntegrityReport):
         """Check for email pages with empty metadata."""
         cursor = await conn.execute("""
             SELECT id FROM pages
             WHERE type = 'email' AND (metadata IS NULL OR metadata = '' OR metadata = '{}')
         """)
-        
+
         rows = await cursor.fetchall()
         for row in rows:
             report.issues.append(IntegrityIssue(

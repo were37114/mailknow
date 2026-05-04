@@ -10,9 +10,9 @@ import logging
 import os
 import secrets
 import socket
-from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -28,14 +28,14 @@ class AuthConfig:
 
 class IPCAuth:
     """IPC authentication manager.
-    
+
     Features:
     - Random token generation on startup
     - Token validation for all requests
     - Unix Domain Socket for local-only communication
     - Token rotation support
     """
-    
+
     def __init__(
         self,
         socket_path: Optional[str] = None,
@@ -47,55 +47,55 @@ class IPCAuth:
         self._created_at = datetime.now(timezone.utc).isoformat()
         self._request_count = 0
         self._failed_auth_count = 0
-    
+
     def validate_token(self, token: str) -> bool:
         """Validate an IPC request token.
-        
+
         Args:
             token: Token from request
-            
+
         Returns:
             True if valid
         """
         if not self.enabled:
             return True
-        
+
         self._request_count += 1
-        
+
         if not token:
             self._failed_auth_count += 1
             return False
-        
+
         if not secrets.compare_digest(token, self._token):
             self._failed_auth_count += 1
             logger.warning(f"Invalid IPC auth token (attempt #{self._failed_auth_count})")
             return False
-        
+
         return True
-    
+
     def rotate_token(self) -> str:
         """Rotate the auth token.
-        
+
         Returns:
             New token
         """
         old_token = self._token
         self._token = secrets.token_hex(32)
         self._created_at = datetime.now(timezone.utc).isoformat()
-        
+
         logger.info("IPC auth token rotated")
         return self._token
-    
+
     @property
     def token(self) -> str:
         """Get current auth token."""
         return self._token
-    
+
     @property
     def socket_path(self) -> str:
         """Get Unix Domain Socket path."""
         return self._socket_path
-    
+
     def get_config(self) -> AuthConfig:
         """Get auth configuration (excludes token for security)."""
         return AuthConfig(
@@ -103,7 +103,7 @@ class IPCAuth:
             enabled=self.enabled,
             created_at=self._created_at,
         )
-    
+
     def get_stats(self) -> Dict[str, Any]:
         """Get authentication statistics."""
         return {

@@ -14,21 +14,22 @@
 日期：2026-05-02（V2 重写）
 """
 
-import pytest
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
-from datetime import datetime, timezone
+import os
 
 # 导入待测模块
 import sys
-import os
+from datetime import datetime, timezone
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
-from llm.fallback import WithFallback, FallbackConfig, FallbackStrategy, FallbackResult
-from llm.client import LLMClient, LLMResponse, LLMProvider
-from llm.token_budget_v2 import TokenBudgetController, BudgetConfig, DegradationLevel
-from core.gate.classifier import GateClassifier, EmailInfo
-
+from core.gate.classifier import EmailInfo, GateClassifier
+from llm.client import LLMClient, LLMProvider, LLMResponse
+from llm.fallback import FallbackConfig, FallbackResult, FallbackStrategy, WithFallback
+from llm.token_budget_v2 import BudgetConfig, DegradationLevel, TokenBudgetController
 
 # ── Fixtures ──
 

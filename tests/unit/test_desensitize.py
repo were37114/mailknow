@@ -174,18 +174,18 @@ class TestRuleManagement:
 
     def test_disable_rule(self, engine):
         engine.disable_rule(SensitiveType.PHONE)
-        
+
         result = engine.desensitize("手机13812345678")
         # Phone should NOT be masked when disabled
         assert "13812345678" in result.sanitized
-        
+
         # Re-enable
         engine.enable_rule(SensitiveType.PHONE)
 
     def test_enable_disabled_rule(self, engine):
         engine.disable_rule(SensitiveType.EMAIL)
         engine.enable_rule(SensitiveType.EMAIL)
-        
+
         result = engine.desensitize("test@company.com")
         assert "t***@company.com" in result.sanitized
 

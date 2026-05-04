@@ -1,14 +1,15 @@
 """Tests for Minion Worker framework."""
 
-import pytest
 import asyncio
 from unittest.mock import AsyncMock, MagicMock
 
+import pytest
+
 from core.minion.worker import (
-    MinionWorker,
     MinionTask,
-    TaskType,
+    MinionWorker,
     TaskStatus,
+    TaskType,
     WorkerStats,
 )
 

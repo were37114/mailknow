@@ -1,20 +1,21 @@
 """Tests for W7: Approval detection + Actions + API."""
 
-import pytest
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from scenes.approval import ApprovalDetector, ApprovalDetection, ApprovalType, ConfidenceLevel
+import pytest
+
+from core.gate.models import GateClass
+from scenes.approval import ApprovalDetection, ApprovalDetector, ApprovalType, ConfidenceLevel
 from scenes.approval.actions import (
+    AmountCategory,
+    ApprovalAction,
     ApprovalActions,
     ApprovalCard,
-    ApprovalAction,
     ApprovalStatus,
-    AmountCategory,
-    classify_amount,
     ConfirmationRequiredError,
+    classify_amount,
 )
-from core.gate.models import GateClass
 from sync.models import Email, EmailAddress
 
 

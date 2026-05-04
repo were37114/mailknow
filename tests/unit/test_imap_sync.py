@@ -1,15 +1,16 @@
 """Tests for IMAP connector."""
 
 import pytest
-from sync.models import Email, EmailAddress, EmailFlag, IMAPFolder
+
 from sync.imap_sync import IMAPConnector, IMAPSyncError
+from sync.models import Email, EmailAddress, EmailFlag, IMAPFolder
 
 
 def test_email_address():
     """Test EmailAddress model."""
     addr1 = EmailAddress(address="test@example.com")
     assert str(addr1) == "test@example.com"
-    
+
     addr2 = EmailAddress(address="test@example.com", name="Test User")
     assert str(addr2) == "Test User <test@example.com>"
 
@@ -23,7 +24,7 @@ def test_email_model():
         to_addrs=[EmailAddress(address="recipient@example.com")],
         text_body="Test body",
     )
-    
+
     assert email.message_id == "<test123@example.com>"
     assert email.subject == "Test Subject"
     assert not email.is_read
@@ -38,7 +39,7 @@ def test_email_flags():
         from_addr=EmailAddress(address="test@example.com"),
         flags=[EmailFlag.SEEN, EmailFlag.ANSWERED]
     )
-    
+
     assert email.is_read
     assert email.is_replied
 
@@ -52,7 +53,7 @@ def test_imap_folder():
         total_messages=100,
         unread_messages=10
     )
-    
+
     assert folder.name == "INBOX"
     assert folder.total_messages == 100
 
@@ -64,7 +65,7 @@ def test_imap_connector_init():
         email_address="test@163.com",
         password="testpass"
     )
-    
+
     assert connector.server == "imap.163.com"
     assert connector.port == 993
 
@@ -76,7 +77,7 @@ def test_imap_connector_unknown_provider():
             email_address="test@unknown-provider.xyz",
             password="testpass"
         )
-    
+
     assert "Unknown email provider" in str(exc_info.value)
 
 
@@ -88,7 +89,7 @@ def test_imap_connector_custom_server():
         server="mail.example.com",
         port=993
     )
-    
+
     assert connector.server == "mail.example.com"
     assert connector.port == 993
 
@@ -103,7 +104,7 @@ def test_server_detection():
         ("user@qq.com", "imap.qq.com", 993),
         ("user@126.com", "imap.126.com", 993),
     ]
-    
+
     for email_addr, expected_server, expected_port in test_cases:
         connector = IMAPConnector(
             email_address=email_addr,
@@ -123,7 +124,7 @@ def test_imap_connector_gmail():
         email_address="test@gmail.com",
         password="app_password"
     )
-    
+
     assert connector.server == "imap.gmail.com"
     assert connector.port == 993
 
@@ -134,6 +135,6 @@ def test_imap_connector_qq():
         email_address="test@qq.com",
         password="auth_code"
     )
-    
+
     assert connector.server == "imap.qq.com"
     assert connector.port == 993

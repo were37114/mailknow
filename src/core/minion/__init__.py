@@ -1,10 +1,10 @@
 """Minion Worker framework for background task processing."""
 
 from .worker import (
-    MinionWorker,
     MinionTask,
-    TaskType,
+    MinionWorker,
     TaskStatus,
+    TaskType,
     WorkerStats,
 )
 

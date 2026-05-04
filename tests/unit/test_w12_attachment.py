@@ -1,12 +1,13 @@
 """Tests for W12: Attachment extraction + metadata."""
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from core.attachment.extractor import (
     AttachmentExtractor,
-    AttachmentType,
     AttachmentMetadata,
+    AttachmentType,
 )
 
 

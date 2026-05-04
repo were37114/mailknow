@@ -4,6 +4,7 @@ Run with: pytest tests/integration/test_imap_real.py -m integration -v
 """
 
 import os
+
 import pytest
 
 # Skip all tests if credentials not available

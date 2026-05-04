@@ -1,14 +1,15 @@
 """Tests for W8: Report generator + DeterministicValidator."""
 
-import pytest
 from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from scenes.report.generator import (
-    ReportGenerator,
-    WeeklyReport,
-    ReportSection,
     DeterministicValidator,
+    ReportGenerator,
+    ReportSection,
+    WeeklyReport,
 )
 
 

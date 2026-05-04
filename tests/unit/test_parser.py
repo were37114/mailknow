@@ -1,8 +1,9 @@
 """Tests for email parser."""
 
 import pytest
-from sync.parser import EmailParser
+
 from sync.models import Email, EmailAddress
+from sync.parser import EmailParser
 
 
 def test_parse_simple_email():
@@ -15,9 +16,9 @@ Date: Mon, 1 Jan 2024 12:00:00 +0000
 
 This is a test email body.
 """
-    
+
     email = EmailParser.parse(raw_email)
-    
+
     assert email is not None
     assert email.subject == "Test Subject"
     assert email.from_addr.address == "sender@example.com"
@@ -36,9 +37,9 @@ Message-ID: <test@example.com>
 
 Test body.
 """
-    
+
     email = EmailParser.parse(raw_email)
-    
+
     assert email is not None
     assert "测试" in email.subject or "主题" in email.subject
 
@@ -52,9 +53,9 @@ Message-ID: <test@example.com>
 
 Test body.
 """
-    
+
     email = EmailParser.parse(raw_email)
-    
+
     assert email is not None
     assert len(email.subject) > 0
 
@@ -80,9 +81,9 @@ Content-Type: text/html; charset=UTF-8
 
 --boundary123--
 """
-    
+
     email = EmailParser.parse(raw_email)
-    
+
     assert email is not None
     assert email.text_body is not None
     assert "Plain text body" in email.text_body
@@ -100,9 +101,9 @@ Message-ID: <test-cc@example.com>
 
 Body text.
 """
-    
+
     email = EmailParser.parse(raw_email)
-    
+
     assert email is not None
     assert len(email.to_addrs) == 2
     assert len(email.cc_addrs) == 2
@@ -119,9 +120,9 @@ Content-Type: text/plain; charset=UTF-8
 
 这是一封中文邮件。
 """.encode('utf-8')
-    
+
     email = EmailParser.parse(raw_email)
-    
+
     assert email is not None
     assert "中文" in email.text_body
 
@@ -148,9 +149,9 @@ Attachment content here.
 
 --boundary456--
 """
-    
+
     email = EmailParser.parse(raw_email)
-    
+
     assert email is not None
     assert "Email body" in email.text_body
     assert len(email.attachments) == 1
@@ -166,9 +167,9 @@ Message-ID: <test@example.com>
 
 Body.
 """
-    
+
     email = EmailParser.parse(raw_email)
-    
+
     assert email is not None
     assert email.from_addr.name == "Sender Name"
     assert email.from_addr.address == "sender@example.com"
@@ -184,9 +185,9 @@ Date: Mon, 15 Jan 2024 10:30:00 +0800
 
 Body.
 """
-    
+
     email = EmailParser.parse(raw_email)
-    
+
     assert email is not None
     assert email.date is not None
     assert email.date.year == 2024

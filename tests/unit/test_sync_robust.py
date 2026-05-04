@@ -1,10 +1,12 @@
 """Tests for sync robustness: dedup, reconnection, error handling."""
 
-import pytest
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
 from datetime import datetime, timezone
+from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
+
+from sync.imap_sync import IMAPConnector
 from sync.robust import (
     ContentDeduplicator,
     DedupResult,
@@ -12,7 +14,6 @@ from sync.robust import (
     RetryConfig,
     SyncErrorHandler,
 )
-from sync.imap_sync import IMAPConnector
 
 
 class TestContentDeduplicator:
@@ -57,16 +58,16 @@ class TestContentDeduplicator:
     def test_lru_eviction(self):
         """Test LRU cache eviction."""
         dedup = ContentDeduplicator(max_cache_size=3)
-        
+
         dedup.check_duplicate("h1")
         dedup.check_duplicate("h2")
         dedup.check_duplicate("h3")
         assert dedup.cache_size == 3
-        
+
         # Adding h4 should evict h1
         dedup.check_duplicate("h4")
         assert dedup.cache_size == 3
-        
+
         # h1 should no longer be in cache
         result = dedup.check_duplicate("h1")
         # It's not in cache, but since existing_id is None, it's not a dup
@@ -77,7 +78,7 @@ class TestContentDeduplicator:
         dedup.check_duplicate("h1")
         dedup.check_duplicate("h2")
         assert dedup.cache_size == 2
-        
+
         dedup.clear_cache()
         assert dedup.cache_size == 0
 
@@ -132,7 +133,7 @@ class TestReconnectionManager:
         """Test successful operation."""
         async def op():
             return "success"
-        
+
         result = await manager.execute_with_retry(op, "test_op")
         assert result == "success"
         assert manager.retry_count == 0
@@ -142,14 +143,14 @@ class TestReconnectionManager:
     async def test_retry_on_retryable_error(self, manager):
         """Test retry on retryable error (timeout)."""
         call_count = 0
-        
+
         async def op():
             nonlocal call_count
             call_count += 1
             if call_count < 2:
                 raise ConnectionError("Connection timeout")
             return "success"
-        
+
         result = await manager.execute_with_retry(op, "test_op")
         assert result == "success"
         assert call_count == 2
@@ -159,7 +160,7 @@ class TestReconnectionManager:
         """Test non-retryable error raises immediately."""
         async def op():
             raise ValueError("Invalid credentials")
-        
+
         with pytest.raises(ValueError):
             await manager.execute_with_retry(op, "test_op")
 
@@ -168,24 +169,24 @@ class TestReconnectionManager:
         """Test max retries exceeded."""
         async def op():
             raise ConnectionError("Connection timeout")
-        
+
         with pytest.raises(ConnectionError):
             await manager.execute_with_retry(op, "test_op")
-        
+
         assert manager.is_healthy is False
 
     @pytest.mark.asyncio
     async def test_reconnect_on_failure(self, manager, mock_connector):
         """Test reconnection attempt on failure."""
         call_count = 0
-        
+
         async def op():
             nonlocal call_count
             call_count += 1
             if call_count < 2:
                 raise ConnectionError("Network timeout")
             return "ok"
-        
+
         result = await manager.execute_with_retry(op, "test_op")
         assert result == "ok"
         # Should have attempted reconnect
@@ -245,7 +246,7 @@ class TestSyncErrorHandler:
         """Test getting all errors."""
         handler.record_error("acc1", "INBOX", 1, ConnectionError("err1"))
         handler.record_error("acc2", "INBOX", 2, ValueError("err2"))
-        
+
         errors = handler.get_errors()
         assert len(errors) == 2
 
@@ -253,7 +254,7 @@ class TestSyncErrorHandler:
         """Test filtering errors by account."""
         handler.record_error("acc1", "INBOX", 1, ConnectionError("err1"))
         handler.record_error("acc2", "INBOX", 2, ValueError("err2"))
-        
+
         errors = handler.get_errors(account_id="acc1")
         assert len(errors) == 1
         assert errors[0].account_id == "acc1"
@@ -262,7 +263,7 @@ class TestSyncErrorHandler:
         """Test filtering retryable errors."""
         handler.record_error("acc1", "INBOX", 1, ConnectionError("timeout"))
         handler.record_error("acc1", "INBOX", 2, ValueError("invalid"))
-        
+
         errors = handler.get_errors(retryable_only=True)
         assert len(errors) == 1
         assert errors[0].retryable is True
@@ -272,7 +273,7 @@ class TestSyncErrorHandler:
         handler.record_error("acc1", "INBOX", 1, ConnectionError("timeout"))
         handler.record_error("acc1", "INBOX", 2, ConnectionError("timeout"))
         handler.record_error("acc2", "INBOX", 3, ValueError("bad"))
-        
+
         summary = handler.get_error_summary()
         assert summary["total"] == 3
         assert summary["retryable"] == 2
@@ -290,7 +291,7 @@ class TestSyncErrorHandler:
         """Test clearing errors for specific account."""
         handler.record_error("acc1", "INBOX", 1, ConnectionError("err"))
         handler.record_error("acc2", "INBOX", 2, ConnectionError("err"))
-        
+
         count = handler.clear_errors(account_id="acc1")
         assert count == 1
         assert len(handler.get_errors()) == 1
@@ -298,10 +299,10 @@ class TestSyncErrorHandler:
     def test_max_errors_limit(self):
         """Test max errors limit."""
         handler = SyncErrorHandler(max_errors=5)
-        
+
         for i in range(10):
             handler.record_error("acc1", "INBOX", i, ConnectionError(f"err{i}"))
-        
+
         assert len(handler.get_errors()) <= 5
 
     def test_empty_summary(self, handler):

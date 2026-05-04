@@ -37,8 +37,16 @@ testpaths = ["tests"]
 pythonpath = ["src"]
 
 [tool.ruff]
-line-length = 100
+line-length = 120
 target-version = "py311"
+lint.ignore = [
+    "F401",  # unused import
+    "E741",  # ambiguous variable name
+    "F841",  # unused variable
+    "F541",  # f-string without placeholders
+    "E501",  # line too long
+]
+lint.select = ["E", "F", "W"]
 
 [tool.mypy]
 python_version = "3.11"

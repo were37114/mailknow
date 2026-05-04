@@ -11,18 +11,18 @@ import asyncio
 import hashlib
 import json
 import logging
-from datetime import datetime, timezone
-from typing import Optional, List, Dict, Any, Callable, Awaitable
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from typing import Any, Awaitable, Callable, Dict, List, Optional
 
-from sync.models import Email
-from sync.config import AccountConfig
-from core.gate.classifier import GateClassifier, EmailInfo, GateResult
+from core.gate.classifier import EmailInfo, GateClassifier, GateResult
 from core.gate.models import GateClass
+from core.wiring.models import Link, LinkRelation, LinkTier
 from core.wiring.tier1_extractor import Tier1Extractor
 from core.wiring.tier2_extractor import Tier2Extractor
-from core.wiring.models import Link, LinkRelation, LinkTier
 from db.pgpool import SQLitePool
+from sync.config import AccountConfig
+from sync.models import Email
 
 logger = logging.getLogger(__name__)
 
@@ -58,13 +58,13 @@ class PipelineStats:
 
 class EmailPipeline:
     """Email processing pipeline.
-    
+
     Flow:
     1. Receive email from sync
     2. Gate classify → 5-level routing
     3. Extract links (Tier1 headers + Tier2 content)
     4. Store to GBrain (pages + links + entities)
-    
+
     Performance target: end-to-end < 100ms per email
     """
 
@@ -76,7 +76,7 @@ class EmailPipeline:
         tier2_extractor: Optional[Tier2Extractor] = None,
     ):
         """Initialize pipeline.
-        
+
         Args:
             db: Database pool
             gate_classifier: Gate classifier (created if not provided)
@@ -102,18 +102,18 @@ class EmailPipeline:
         uid: int = 0,
     ) -> PipelineResult:
         """Process a single email through the pipeline.
-        
+
         Args:
             email: Email to process
             account_id: Source account ID
             folder: Source IMAP folder
             uid: IMAP UID
-            
+
         Returns:
             PipelineResult with processing details
         """
         start_time = _now_ms()
-        
+
         try:
             # Step 1: Compute page ID (must match Tier1/Tier2 extractor format)
             # Also compute a content_hash for dedup tracking
@@ -139,7 +139,7 @@ class EmailPipeline:
 
             # Step 3: Store page to GBrain
             conn = await self.db.get_connection()
-            
+
             metadata = {
                 "account_id": account_id,
                 "uid": uid,
@@ -172,7 +172,7 @@ class EmailPipeline:
             else:
                 # Insert new page
                 await conn.execute(
-                    """INSERT INTO pages 
+                    """INSERT INTO pages
                        (id, type, content, metadata, gate_class, gate_score, created_at, updated_at)
                        VALUES (?, 'email', ?, ?, ?, ?, ?, ?)""",
                     (
@@ -190,7 +190,7 @@ class EmailPipeline:
 
             # Step 4: Extract links
             all_links: List[Link] = []
-            
+
             # Tier1: Header-based links
             try:
                 tier1_links = self.tier1_extractor.extract(email)
@@ -233,7 +233,7 @@ class EmailPipeline:
                     name = target_id.split(":", 1)[1] if ":" in target_id else target_id
                     page_type = target_id.split(":", 1)[0] if ":" in target_id else "unknown"
                     await conn.execute(
-                        """INSERT OR IGNORE INTO pages 
+                        """INSERT OR IGNORE INTO pages
                            (id, type, content, metadata, created_at, updated_at)
                            VALUES (?, ?, ?, '{}', ?, ?)""",
                         (target_id, page_type, name, _now_iso(), _now_iso())
@@ -249,18 +249,18 @@ class EmailPipeline:
                     link_id = hashlib.sha256(
                         f"{link.source_id}:{link.target_id}:{link.relation.value if hasattr(link.relation, 'value') else link.relation}".encode()
                     ).hexdigest()[:24]
-                    
+
                     # tier is INTEGER in schema
                     tier_val = link.tier.value if hasattr(link.tier, 'value') else link.tier
                     if isinstance(tier_val, str):
                         tier_map = {"tier1": 1, "tier2": 2, "tier4": 4}
                         tier_val = tier_map.get(tier_val, int(tier_val) if tier_val.isdigit() else 1)
-                    
+
                     # target_id: must reference pages or be NULL
                     target_id = link.target_id if link.target_id else None
-                    
+
                     await conn.execute(
-                        """INSERT OR IGNORE INTO links 
+                        """INSERT OR IGNORE INTO links
                            (id, source_id, target_id, relation, tier, weight, metadata, created_at)
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                         (
@@ -284,7 +284,7 @@ class EmailPipeline:
                 try:
                     name = entity_id.split(":", 1)[1] if ":" in entity_id else entity_id
                     await conn.execute(
-                        """INSERT OR IGNORE INTO entities 
+                        """INSERT OR IGNORE INTO entities
                            (id, type, name, attributes, created_at, updated_at)
                            VALUES (?, 'person', ?, ?, ?, ?)""",
                         (
@@ -340,13 +340,13 @@ class EmailPipeline:
         start_uid: int = 0,
     ) -> List[PipelineResult]:
         """Process a batch of emails.
-        
+
         Args:
             emails: List of emails to process
             account_id: Source account ID
             folder: Source IMAP folder
             start_uid: Starting UID
-            
+
         Returns:
             List of PipelineResults
         """
@@ -359,7 +359,7 @@ class EmailPipeline:
                 uid=start_uid + i,
             )
             results.append(result)
-        
+
         return results
 
     def reset_stats(self) -> None:

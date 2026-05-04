@@ -14,17 +14,18 @@ MailKnow V5.2 Token预算测试
 日期：2026-05-02（V2 重写）
 """
 
-import sys
 import os
+import sys
 import tempfile
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
-import pytest
 from datetime import datetime, timezone
 from unittest.mock import patch
 
-from llm.token_budget_v2 import TokenBudgetController, BudgetConfig, DegradationLevel, UsageSummary
+import pytest
 
+from llm.token_budget_v2 import BudgetConfig, DegradationLevel, TokenBudgetController, UsageSummary
 
 # ── Fixtures ──
 
@@ -72,7 +73,7 @@ def budget_with_db():
     # 清理
     try:
         os.unlink(db_path)
-    except:
+    except Exception:
         pass
 
 

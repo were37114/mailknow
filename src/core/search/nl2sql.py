@@ -10,9 +10,9 @@ V5.2 spec:
 import json
 import logging
 import re
-from typing import Optional, Dict, Any, List, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Tuple
 
 from llm.client import LLMClient, get_llm_client
 from llm.fallback import WithFallback, get_fallback
@@ -106,14 +106,14 @@ class NL2SQLResult:
 
 class NL2SQLTranslator:
     """Natural language to SQL translator.
-    
+
     Features:
     - LLM-based SQL generation
     - Security validation
     - Template fallback for common patterns
     - Query result formatting
     """
-    
+
     def __init__(
         self,
         llm_client: Optional[LLMClient] = None,
@@ -121,13 +121,13 @@ class NL2SQLTranslator:
     ):
         self.llm = llm_client or get_llm_client()
         self.fallback = fallback or get_fallback()
-    
+
     async def translate(self, query: str) -> NL2SQLResult:
         """Translate natural language to SQL.
-        
+
         Args:
             query: Natural language query
-            
+
         Returns:
             Translation result with validated SQL
         """
@@ -135,7 +135,7 @@ class NL2SQLTranslator:
         template_result = self._try_template(query)
         if template_result:
             return template_result
-        
+
         # Use LLM
         result = await self._translate_with_llm(query)
         if result:
@@ -143,13 +143,13 @@ class NL2SQLTranslator:
             is_safe, errors = self._validate_sql(result.sql)
             result.is_safe = is_safe
             result.validation_errors = errors
-            
+
             if not is_safe:
                 logger.warning(f"Generated SQL failed validation: {errors}")
                 result.sql = ""
-            
+
             return result
-        
+
         # Fallback
         return NL2SQLResult(
             original_query=query,
@@ -158,12 +158,12 @@ class NL2SQLTranslator:
             is_safe=False,
             validation_errors=["translation_failed"],
         )
-    
+
     async def _translate_with_llm(self, query: str) -> Optional[NL2SQLResult]:
         """Translate using LLM."""
         try:
             prompt = NL2SQL_PROMPT.format(schema=SCHEMA_DESC, query=query)
-            
+
             result = await self.fallback.call(
                 prompt=prompt,
                 system="你是SQL生成助手，只生成安全的SELECT查询。",
@@ -173,12 +173,12 @@ class NL2SQLTranslator:
                 task_type="nl2sql",
                 estimated_tokens=800,
             )
-            
+
             if result.used_fallback:
                 return None
-            
+
             data = json.loads(result.content)
-            
+
             return NL2SQLResult(
                 original_query=query,
                 sql=data.get("sql", ""),
@@ -186,15 +186,15 @@ class NL2SQLTranslator:
                 estimated_rows=data.get("estimated_rows", 0),
                 llm_used=True,
             )
-            
+
         except Exception as e:
             logger.error(f"NL2SQL LLM translation failed: {e}")
             return None
-    
+
     def _try_template(self, query: str) -> Optional[NL2SQLResult]:
         """Try template-based translation for common patterns."""
         import re
-        
+
         # Pattern: "最近N天的邮件"
         match = re.search(r'最近(\d+)天[的的]?邮件', query)
         if match:
@@ -205,7 +205,7 @@ class NL2SQLTranslator:
                 explanation=f"查询最近{days}天的邮件",
                 estimated_rows=100,
             )
-        
+
         # Pattern: "和XXX的往来邮件"
         match = re.search(r'[和与](.+?)[的的]往来[邮件]?', query)
         if match:
@@ -216,7 +216,7 @@ class NL2SQLTranslator:
                 explanation=f"查询与{name}的往来邮件",
                 estimated_rows=50,
             )
-        
+
         # Pattern: "审批邮件"
         if "审批" in query:
             return NL2SQLResult(
@@ -225,7 +225,7 @@ class NL2SQLTranslator:
                 explanation="查询审批相关邮件",
                 estimated_rows=50,
             )
-        
+
         # Pattern: "重要邮件"
         if "重要" in query:
             return NL2SQLResult(
@@ -234,31 +234,31 @@ class NL2SQLTranslator:
                 explanation="查询重要和紧急邮件",
                 estimated_rows=50,
             )
-        
+
         return None
-    
+
     def _validate_sql(self, sql: str) -> Tuple[bool, List[str]]:
         """Validate SQL for safety.
-        
+
         Returns:
             (is_safe, errors)
         """
         errors = []
-        
+
         if not sql.strip():
             errors.append("empty_sql")
             return False, errors
-        
+
         # Check for dangerous patterns
         sql_upper = sql.upper()
         for pattern in DANGEROUS_PATTERNS:
             if re.search(pattern, sql_upper):
                 errors.append(f"dangerous_pattern: {pattern}")
-        
+
         # Must start with SELECT
         if not sql_upper.strip().startswith("SELECT"):
             errors.append("not_select")
-        
+
         # Check table names
         for table in re.findall(r'\b(\w+)\b', sql):
             if table.lower() in ('from', 'join', 'into', 'update', 'table'):
@@ -267,9 +267,9 @@ class NL2SQLTranslator:
             if table.lower() in ALLOWED_TABLES:
                 continue
             # Could be an alias, allow it
-        
+
         # No semicolons
         if ';' in sql:
             errors.append("semicolon_found")
-        
+
         return len(errors) == 0, errors

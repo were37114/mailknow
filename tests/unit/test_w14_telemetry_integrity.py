@@ -1,10 +1,11 @@
 """Tests for W14: Telemetry + Feedback flywheel."""
 
-import pytest
 from datetime import datetime, timezone
 
-from core.telemetry import TelemetryCollector, TelemetryRecord, TelemetryEvent
-from scenes.recommender import SceneRecommender, SceneType, FeedbackType
+import pytest
+
+from core.telemetry import TelemetryCollector, TelemetryEvent, TelemetryRecord
+from scenes.recommender import FeedbackType, SceneRecommender, SceneType
 
 
 class TestTelemetryCollector:

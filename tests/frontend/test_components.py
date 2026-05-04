@@ -14,9 +14,9 @@ Components tested:
 6. ReportEditor - content validation, forbidden phrases
 """
 
-import sys
 import os
 import re
+import sys
 from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
@@ -399,7 +399,7 @@ def test_app_renders_components():
     """App renders all major components."""
     app_path = RENDERER_DIR / "App.tsx"
     app = app_path.read_text()
-    components = ["SearchBox", "Sidebar", "GateBadge", "EmailRow", "EmailDetail", 
+    components = ["SearchBox", "Sidebar", "GateBadge", "EmailRow", "EmailDetail",
                   "TokenPanel", "EmptyState", "LoadingSpinner"]
     found = sum(1 for c in components if c in app)
     assert found >= 6, f"Only {found}/{len(components)} major components found in App"

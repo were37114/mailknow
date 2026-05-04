@@ -1,10 +1,11 @@
 """Tests for sync config and multi-account support."""
 
 import json
-import pytest
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from sync.config import AccountConfig, AccountManager, AccountStatus
 
@@ -239,7 +240,7 @@ class TestAccountManager:
         )
         manager.add_account(config1)
         manager.add_account(config2)
-        
+
         active = manager.get_active_accounts()
         assert len(active) == 1
         assert active[0].account_id == "acc1"
@@ -255,7 +256,7 @@ class TestAccountManager:
                 password_encrypted=f"pass{i}"
             )
             manager.add_account(config)
-        
+
         assert len(manager.get_all_accounts()) == 3
 
 
@@ -304,12 +305,12 @@ class TestSyncEngine:
         """Test progress callback registration."""
         from sync.sync_engine import SyncEngine, SyncProgress
         engine = SyncEngine(account_manager=account_manager)
-        
+
         received = []
-        
+
         async def on_progress(p: SyncProgress):
             received.append(p)
-        
+
         engine.on_progress(on_progress)
         assert len(engine._progress_callbacks) == 1
 
@@ -318,12 +319,12 @@ class TestSyncEngine:
         """Test result callback registration."""
         from sync.sync_engine import SyncEngine, SyncResult
         engine = SyncEngine(account_manager=account_manager)
-        
+
         received = []
-        
+
         async def on_result(r: SyncResult):
             received.append(r)
-        
+
         engine.on_result(on_result)
         assert len(engine._result_callbacks) == 1
 
@@ -332,7 +333,7 @@ class TestSyncEngine:
         """Test sync with connection error."""
         from sync.sync_engine import SyncEngine
         engine = SyncEngine(account_manager=account_manager)
-        
+
         config = AccountConfig(
             account_id="acc1",
             email_address="test@invalid.com",
@@ -341,7 +342,7 @@ class TestSyncEngine:
             password_encrypted="pass"
         )
         account_manager.add_account(config)
-        
+
         result = await engine.sync_account(config)
         assert result.error_message is not None
         assert result.errors > 0

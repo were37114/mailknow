@@ -8,13 +8,14 @@ Uses LLM (GPT-4o-mini) for semantic relationship extraction:
 
 import json
 import logging
-from typing import List, Optional, Dict, Any
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
-from sync.models import Email
-from .models import Link, LinkRelation, LinkTier
 from llm.client import LLMClient, LLMProvider, get_llm_client
 from llm.token_budget import TokenBudget
+from sync.models import Email
+
+from .models import Link, LinkRelation, LinkTier
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +58,7 @@ class ApprovalResult:
     confidence: float
     approval_type: str  # direct, cc, notification, none
     reason: str
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ApprovalResult":
         """Create from dictionary."""
@@ -71,31 +72,31 @@ class ApprovalResult:
 
 class Tier4Extractor:
     """Extract Tier 4 links using LLM.
-    
+
     Tier 4 = LLM-powered semantic extraction.
     ~400 tokens per email (for approval classification).
     """
-    
+
     def __init__(
         self,
         llm_client: Optional[LLMClient] = None,
         token_budget: Optional[TokenBudget] = None,
     ):
         """Initialize Tier 4 extractor.
-        
+
         Args:
             llm_client: LLM client instance
             token_budget: Token budget controller
         """
         self.llm = llm_client or get_llm_client()
         self.budget = token_budget or TokenBudget()
-    
+
     async def classify_approval(self, email: Email, user_email: str = "") -> ApprovalResult:
         """Classify if email is an approval request.
-        
+
         Args:
             email: Email to classify
-        
+
         Returns:
             Approval classification result
         """
@@ -103,23 +104,23 @@ class Tier4Extractor:
         if self.llm.provider == LLMProvider.LOCAL:
             logger.debug("Using local rule-based classification (no LLM API)")
             return self._local_approval_classify(email, user_email=user_email)
-        
+
         # Check budget
         estimated_tokens = 500  # ~400 input + ~100 output
         if not self.budget.check(estimated_tokens):
             logger.warning("Token budget exceeded, using local fallback")
             return self._local_approval_classify(email, user_email=user_email)
-        
+
         # Prepare prompt
         content = self._truncate_content(email.text_body or "", max_chars=1000)
-        
+
         prompt = APPROVAL_PROMPT.format(
             subject=email.subject,
             from_addr=str(email.from_addr),
             to_addrs=", ".join(str(a) for a in email.to_addrs),
             content=content,
         )
-        
+
         try:
             response = await self.llm.complete(
                 prompt=prompt,
@@ -128,36 +129,36 @@ class Tier4Extractor:
                 max_tokens=200,
                 json_mode=True,
             )
-            
+
             # Record token usage
             self.budget.record(response.tokens_total)
-            
+
             # Parse response
             result = self._parse_approval_response(response.content)
-            
+
             logger.info(
                 f"Approval classification: is_approval={result.is_approval}, "
                 f"confidence={result.confidence}, type={result.approval_type}"
             )
-            
+
             return result
-            
+
         except Exception as e:
             logger.error(f"LLM approval classification failed: {e}")
             return self._local_approval_classify(email)
-    
+
     def extract(self, email: Email) -> List[Link]:
         """Extract Tier 4 links (synchronous wrapper for basic extraction).
-        
+
         For full LLM-based extraction, use classify_approval() instead.
         This method provides local fallback extraction.
         """
         links = []
         email_id = self._get_email_id(email)
-        
+
         # Local rule-based approval detection
         result = self._local_approval_classify(email)
-        
+
         if result.is_approval:
             links.append(Link(
                 source_id=email_id,
@@ -172,17 +173,17 @@ class Tier4Extractor:
                     "provider": "local_fallback"
                 }
             ))
-        
+
         return links
-    
+
     def _local_approval_classify(self, email: Email, user_email: str = "") -> ApprovalResult:
         """Local rule-based approval classification (fallback).
-        
+
         Used when LLM is unavailable or budget exceeded.
         """
         subject = email.subject or ""
         content = email.text_body or ""
-        
+
         # Approval keywords (order matters: longer phrases first)
         approval_keywords = [
             "请审批", "请批准", "请签字", "请审核",
@@ -200,7 +201,7 @@ class Tier4Extractor:
             # Shorter keywords last (lower priority)
             "请确认",
         ]
-        
+
         # Notification keywords (not approval - these indicate completed/rejected)
         # Checked FIRST for direct recipients, but NOT for CC users
         # (CC users getting "已通过" is a CC approval notification, not a direct notification)
@@ -213,14 +214,14 @@ class Tier4Extractor:
             "已关闭", "已完成", "已开通",
             "approved",
         ]
-        
+
         # Check subject first
         subject_lower = subject.lower()
         content_lower = content.lower()
-        
+
         is_cc_user = self._is_cc_recipient(email, user_email)
         is_system_forward = "系统转发" in content_lower or "系统转发" in subject_lower
-        
+
         # Check if it's a notification about completed approval
         # For CC users, "已通过" means they're being notified as CC, not that it's a pure notification
         if not is_cc_user:
@@ -232,7 +233,7 @@ class Tier4Extractor:
                         approval_type="notification",
                         reason=f"已完成审批通知: {kw}"
                     )
-        
+
         # Check for system-forwarded approvals
         if is_system_forward:
             return ApprovalResult(
@@ -241,12 +242,12 @@ class Tier4Extractor:
                 approval_type="system_forward",
                 reason="系统转发审批"
             )
-        
+
         # Check if it's an approval request
         # First, check for compound approval patterns (请...审批/批准/审核)
         approval_action_words = ["审批", "批准", "签字", "审核", "签核"]
         request_words = ["请", "需要", "要求", "烦请", "恳请", "望", "需", "待"]
-        
+
         for action in approval_action_words:
             for request in request_words:
                 # Check patterns like "请...审批" (with up to 4 chars between)
@@ -259,7 +260,7 @@ class Tier4Extractor:
                         approval_type="cc" if is_cc_user else "direct",
                         reason=f"包含审批请求模式: {request}...{action}"
                     )
-        
+
         # CC approval: user in CC + approval-related content (FYI, 抄送知会)
         if is_cc_user:
             cc_indicators = ["审批", "批准", "审核", "预算", "合同", "立项", "采购", "报销", "请假", "加班", "权限"]
@@ -271,7 +272,7 @@ class Tier4Extractor:
                         approval_type="cc",
                         reason=f"CC审批知会: 包含'{indicator}'"
                     )
-        
+
         # Then check exact keyword matches
         for kw in approval_keywords:
             if kw in subject_lower or kw in content_lower:
@@ -281,7 +282,7 @@ class Tier4Extractor:
                     approval_type="cc" if is_cc_user else "direct",
                     reason=f"包含审批关键词: {kw}"
                 )
-        
+
         # Fallback: subject contains "审批" and user is a direct recipient
         if "审批" in subject_lower and not is_cc_user:
             return ApprovalResult(
@@ -290,24 +291,24 @@ class Tier4Extractor:
                 approval_type="direct",
                 reason="主题包含审批关键词"
             )
-        
+
         return ApprovalResult(
             is_approval=False,
             confidence=0.3,
             approval_type="none",
             reason="未检测到审批特征"
         )
-    
+
     def _is_cc_recipient(self, email: Email, user_email: str = "") -> bool:
         """Check if the user is a CC recipient (not primary recipient).
-        
+
         A CC approval means the user was copied on an approval request
         that was primarily addressed to someone else.
-        
+
         Args:
             email: The email to check
             user_email: The current user's email address
-            
+
         Returns:
             True if user is in CC list (not in TO list)
         """
@@ -316,19 +317,19 @@ class Tier4Extractor:
             # consider it CC if there are CC recipients and TO is not empty
             # (someone else is the primary recipient)
             return len(email.cc_addrs) > 0 and len(email.to_addrs) > 0
-        
+
         user_lower = user_email.lower()
-        
+
         # Get address strings
         to_addrs_lower = [str(a).lower() for a in email.to_addrs] if email.to_addrs else []
         cc_addrs_lower = [str(a).lower() for a in email.cc_addrs] if email.cc_addrs else []
-        
+
         in_to = any(user_lower in addr for addr in to_addrs_lower)
         in_cc = any(user_lower in addr for addr in cc_addrs_lower)
-        
+
         # CC recipient = in CC list and not in TO list
         return in_cc and not in_to
-    
+
     def _parse_approval_response(self, content: str) -> ApprovalResult:
         """Parse LLM response into ApprovalResult."""
         try:
@@ -338,7 +339,7 @@ class Tier4Extractor:
                 content = content.split("```")[1]
                 if content.startswith("json"):
                     content = content[4:]
-            
+
             data = json.loads(content)
             return ApprovalResult.from_dict(data)
         except json.JSONDecodeError:
@@ -349,13 +350,13 @@ class Tier4Extractor:
                 approval_type="none",
                 reason="parse_error"
             )
-    
+
     def _get_email_id(self, email: Email) -> str:
         """Get email ID."""
         if email.message_id:
             return f"email:{email.message_id.strip('<>')}"
         return f"email:unknown:{id(email)}"
-    
+
     def _truncate_content(self, content: str, max_chars: int = 1000) -> str:
         """Truncate content to fit within token budget."""
         if len(content) <= max_chars:

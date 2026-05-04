@@ -13,11 +13,11 @@ import json
 import logging
 import time
 import uuid
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from dataclasses import dataclass, field, asdict
-from typing import Optional, List, Dict, Any, Callable, Awaitable
 from pathlib import Path
+from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ class TaskStatus(str, Enum):
 @dataclass
 class MinionTask:
     """A Minion background task.
-    
+
     Attributes:
         task_id: Unique task identifier
         task_type: Type of task
@@ -105,7 +105,7 @@ class WorkerStats:
 
 class MinionWorker:
     """Background task worker with queue and retry logic.
-    
+
     Features:
     - Priority-based task queue
     - Concurrent task execution
@@ -123,7 +123,7 @@ class MinionWorker:
         persist_dir: Optional[Path] = None,
     ):
         """Initialize Minion worker.
-        
+
         Args:
             worker_id: Worker identifier
             max_concurrent: Max concurrent tasks
@@ -134,7 +134,7 @@ class MinionWorker:
         self.max_concurrent = max_concurrent
         self.task_timeout = task_timeout
         self.persist_dir = persist_dir
-        
+
         self._queue: asyncio.PriorityQueue = asyncio.PriorityQueue()
         self._handlers: Dict[str, TaskHandler] = {}
         self._dead_letters: List[MinionTask] = []
@@ -145,7 +145,7 @@ class MinionWorker:
 
     def register_handler(self, task_type: str, handler: TaskHandler) -> None:
         """Register a task handler.
-        
+
         Args:
             task_type: Task type to handle
             handler: Async callable that processes the task
@@ -161,13 +161,13 @@ class MinionWorker:
         max_retries: int = 3,
     ) -> MinionTask:
         """Submit a new task to the queue.
-        
+
         Args:
             task_type: Type of task
             payload: Task data
             priority: Priority (0=highest)
             max_retries: Max retry attempts
-            
+
         Returns:
             Created MinionTask
         """
@@ -177,18 +177,18 @@ class MinionWorker:
             priority=priority,
             max_retries=max_retries,
         )
-        
+
         # Priority queue uses (priority, creation_time, task)
         await self._queue.put((priority, time.time(), task))
         logger.debug(f"Submitted task {task.task_id} ({task_type}), priority={priority}")
-        
+
         return task
 
     async def start(self) -> None:
         """Start the worker loop."""
         if self._running:
             return
-        
+
         self._running = True
         self._semaphore = asyncio.Semaphore(self.max_concurrent)
         logger.info(f"Minion worker {self.worker_id} started (max_concurrent={self.max_concurrent})")
@@ -196,20 +196,20 @@ class MinionWorker:
     async def stop(self) -> None:
         """Stop the worker loop."""
         self._running = False
-        
+
         # Cancel running tasks
         for task_id, task in self._running_tasks.items():
             task.cancel()
-        
+
         # Wait for tasks to finish
         if self._running_tasks:
             await asyncio.gather(*self._running_tasks.values(), return_exceptions=True)
-        
+
         logger.info(f"Minion worker {self.worker_id} stopped")
 
     async def process_one(self) -> Optional[MinionTask]:
         """Process one task from the queue.
-        
+
         Returns:
             Processed task or None if queue empty
         """
@@ -220,22 +220,22 @@ class MinionWorker:
             )
         except asyncio.TimeoutError:
             return None
-        
+
         # Process with semaphore
         async with self._semaphore:
             return await self._execute_task(task)
 
     async def _execute_task(self, task: MinionTask) -> MinionTask:
         """Execute a single task with timeout and error handling.
-        
+
         Args:
             task: Task to execute
-            
+
         Returns:
             Updated task
         """
         handler = self._handlers.get(task.task_type)
-        
+
         if handler is None:
             task.status = TaskStatus.FAILED.value
             task.error = f"No handler for task type: {task.task_type}"
@@ -243,49 +243,49 @@ class MinionWorker:
             self._stats.tasks_failed += 1
             logger.error(f"No handler for task {task.task_id} ({task.task_type})")
             return task
-        
+
         task.status = TaskStatus.RUNNING.value
         task.started_at = now_iso()
         start_time = time.time()
-        
+
         try:
             # Execute with timeout
             result = await asyncio.wait_for(
                 handler(task),
                 timeout=self.task_timeout
             )
-            
+
             # Success
             task.status = TaskStatus.COMPLETED.value
             task.result = result
             task.completed_at = now_iso()
-            
+
             # Update stats
             duration_ms = (time.time() - start_time) * 1000
             self._stats.tasks_processed += 1
             self._stats.total_processing_time_ms += duration_ms
             self._stats.by_type[task.task_type] = self._stats.by_type.get(task.task_type, 0) + 1
-            
+
             logger.debug(f"Task {task.task_id} completed in {duration_ms:.0f}ms")
-            
+
         except asyncio.TimeoutError:
             task.error = f"Task timed out after {self.task_timeout}s"
             await self._handle_task_failure(task)
-            
+
         except Exception as e:
             task.error = str(e)
             await self._handle_task_failure(task)
-        
+
         return task
 
     async def _handle_task_failure(self, task: MinionTask) -> None:
         """Handle task failure with retry or dead letter.
-        
+
         Args:
             task: Failed task
         """
         task.retry_count += 1
-        
+
         if task.retry_count < task.max_retries:
             # Retry with exponential backoff
             delay = min(2 ** task.retry_count, 60)  # Cap at 60s
@@ -294,12 +294,12 @@ class MinionWorker:
                 f"Task {task.task_id} failed (retry {task.retry_count}/{task.max_retries}), "
                 f"retrying in {delay}s: {task.error}"
             )
-            
+
             await asyncio.sleep(delay)
-            
+
             # Re-queue with higher priority
             await self._queue.put((task.priority - 1, time.time(), task))
-            
+
         else:
             # Move to dead letter
             task.status = TaskStatus.DEAD_LETTER.value
@@ -312,10 +312,10 @@ class MinionWorker:
 
     async def process_batch(self, batch_size: int = 10) -> List[MinionTask]:
         """Process a batch of tasks.
-        
+
         Args:
             batch_size: Maximum tasks to process
-            
+
         Returns:
             List of processed tasks
         """
@@ -348,7 +348,7 @@ class MinionWorker:
 
     def clear_dead_letters(self) -> int:
         """Clear dead letter queue.
-        
+
         Returns:
             Number of cleared tasks
         """

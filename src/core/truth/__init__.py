@@ -1,6 +1,6 @@
 """Truth module - compiled truth generation and caching."""
 
-from .compiler import TruthCompiler, CompiledTruth, get_truth_compiler
+from .compiler import CompiledTruth, TruthCompiler, get_truth_compiler
 
 __all__ = [
     "TruthCompiler",

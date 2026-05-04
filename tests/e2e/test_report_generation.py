@@ -14,21 +14,25 @@ E2E周报生成测试
 日期：2026-05-02
 """
 
-import pytest
 import json
+import os
+import sys
 from datetime import datetime, timedelta
 from unittest.mock import AsyncMock, patch
 
-import sys
-import os
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
+from llm.client import LLMClient, LLMProvider, LLMResponse
 from scenes.report.generator import (
-    ReportGenerator, DeterministicValidator, WeeklyReport, ReportSection,
-    FORBIDDEN_PHRASES, FACTUAL_PATTERNS,
+    FACTUAL_PATTERNS,
+    FORBIDDEN_PHRASES,
+    DeterministicValidator,
+    ReportGenerator,
+    ReportSection,
+    WeeklyReport,
 )
-from llm.client import LLMClient, LLMResponse, LLMProvider
-
 
 # ── Fixtures ──
 

@@ -1,6 +1,6 @@
 """Approval scene module."""
 
-from .detector import ApprovalDetector, ApprovalDetection, ApprovalType, ConfidenceLevel
+from .detector import ApprovalDetection, ApprovalDetector, ApprovalType, ConfidenceLevel
 
 __all__ = [
     "ApprovalDetector",

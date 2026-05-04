@@ -15,22 +15,25 @@ E2E知识库查询测试
 日期：2026-05-02
 """
 
-import pytest
 import json
-import sqlite3
-import tempfile
 import os
+import sqlite3
+import sys
+import tempfile
 from datetime import datetime, timezone
 
-import sys
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
-from core.search.hybrid import (
-    HybridSearch, SearchResult, SearchWeights, SearchOptions,
-)
-from core.search.nl2sql import NL2SQLTranslator, NL2SQLResult
 from core.search.embedding import LocalEmbedding
-
+from core.search.hybrid import (
+    HybridSearch,
+    SearchOptions,
+    SearchResult,
+    SearchWeights,
+)
+from core.search.nl2sql import NL2SQLResult, NL2SQLTranslator
 
 # ── Fixtures ──
 
@@ -145,7 +148,7 @@ def test_db():
 
     try:
         os.unlink(db_path)
-    except:
+    except Exception:
         pass
 
 

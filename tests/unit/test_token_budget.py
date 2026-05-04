@@ -1,7 +1,8 @@
 """Tests for token budget controller."""
 
-import pytest
 from datetime import datetime
+
+import pytest
 
 from llm.token_budget import TokenBudget
 
@@ -32,7 +33,7 @@ def test_check_exceeds_daily(budget: TokenBudget):
 def test_record_usage(budget: TokenBudget):
     """Test recording token usage."""
     budget.record(100, cost=0.001)
-    
+
     assert budget._used_today == 100
     assert budget._cost_today == 0.001
 
@@ -40,7 +41,7 @@ def test_record_usage(budget: TokenBudget):
 def test_remaining(budget: TokenBudget):
     """Test remaining tokens."""
     assert budget.remaining == 1000
-    
+
     budget.record(300)
     assert budget.remaining == 700
 
@@ -48,10 +49,10 @@ def test_remaining(budget: TokenBudget):
 def test_usage_ratio(budget: TokenBudget):
     """Test usage ratio."""
     assert budget.usage_ratio == 0.0
-    
+
     budget.record(500)
     assert budget.usage_ratio == 0.5
-    
+
     budget.record(300)
     assert budget.usage_ratio == 0.8
 
@@ -60,7 +61,7 @@ def test_daily_reset(budget: TokenBudget):
     """Test daily reset."""
     budget.record(500)
     assert budget._used_today == 500
-    
+
     # Simulate new day
     budget._reset_date = "2000-01-01"
     assert budget.remaining == 1000  # Should reset
@@ -69,7 +70,7 @@ def test_daily_reset(budget: TokenBudget):
 def test_default_budget():
     """Test default budget values."""
     budget = TokenBudget()
-    
+
     assert budget.daily_limit == 500_000
     assert budget.per_request_limit == 10_000
     assert budget.daily_cost_limit == 0.50

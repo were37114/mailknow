@@ -1,12 +1,12 @@
 """Email account configuration management."""
 
+import hashlib
 import json
 import logging
-import hashlib
-from pathlib import Path
-from dataclasses import dataclass, field, asdict
-from typing import Optional, List, Dict
+from dataclasses import asdict, dataclass, field
 from enum import Enum
+from pathlib import Path
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ class AccountStatus(str, Enum):
 @dataclass
 class AccountConfig:
     """Email account configuration.
-    
+
     Attributes:
         account_id: Unique identifier (hash of email address)
         email_address: Email address
@@ -67,14 +67,14 @@ class AccountConfig:
 
 class AccountManager:
     """Manages email account configurations.
-    
+
     Stores accounts in JSON file at ~/.mailknow/accounts.json
     Supports CRUD operations and concurrent access.
     """
 
     def __init__(self, config_dir: Optional[Path] = None):
         """Initialize account manager.
-        
+
         Args:
             config_dir: Directory for config files.
                        Defaults to ~/.mailknow
@@ -119,13 +119,13 @@ class AccountManager:
 
     def add_account(self, config: AccountConfig) -> AccountConfig:
         """Add a new email account.
-        
+
         Args:
             config: Account configuration
-            
+
         Returns:
             Added account config with generated ID
-            
+
         Raises:
             ValueError: If account already exists
         """
@@ -139,10 +139,10 @@ class AccountManager:
 
     def remove_account(self, account_id: str) -> bool:
         """Remove an email account.
-        
+
         Args:
             account_id: Account ID to remove
-            
+
         Returns:
             True if removed, False if not found
         """
@@ -171,11 +171,11 @@ class AccountManager:
 
     def update_account(self, account_id: str, **kwargs) -> Optional[AccountConfig]:
         """Update account fields.
-        
+
         Args:
             account_id: Account ID
             **kwargs: Fields to update
-            
+
         Returns:
             Updated account or None if not found
         """
@@ -198,7 +198,7 @@ class AccountManager:
         error: Optional[str] = None
     ) -> None:
         """Update sync state for an account.
-        
+
         Args:
             account_id: Account ID
             last_uid: Last synced UID

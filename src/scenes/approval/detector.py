@@ -10,17 +10,17 @@ V5.2 spec:
 """
 
 import logging
-from typing import List, Optional, Dict, Any
 from dataclasses import dataclass, field
-from enum import Enum
 from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
-from core.gate.classifier import GateClassifier, EmailInfo
+from core.gate.classifier import EmailInfo, GateClassifier
 from core.gate.models import GateClass
-from core.wiring.tier4_extractor import Tier4Extractor, ApprovalResult
+from core.wiring.tier4_extractor import ApprovalResult, Tier4Extractor
 from llm.client import LLMClient, get_llm_client
-from llm.token_budget import TokenBudget
 from llm.fallback import WithFallback, get_fallback
+from llm.token_budget import TokenBudget
 from sync.models import Email
 
 logger = logging.getLogger(__name__)
@@ -51,25 +51,25 @@ class ApprovalDetection:
     gate_class: GateClass
     llm_used: bool = False
     reason: str = ""
-    
+
     # Approval details
     approver: str = ""           # Who needs to approve
     requester: str = ""          # Who requested approval
     amount: Optional[float] = None  # Amount if mentioned
     subject: str = ""
     deadline: Optional[str] = None  # Deadline if mentioned
-    
+
     @property
     def needs_action(self) -> bool:
         """Whether user needs to take action."""
-        return (self.is_approval and 
+        return (self.is_approval and
                 self.approval_type == ApprovalType.DIRECT and
                 self.confidence_level in (ConfidenceLevel.HIGH, ConfidenceLevel.MEDIUM))
-    
+
     @property
     def should_push(self) -> bool:
         """Whether to proactively push notification to user.
-        
+
         Per V5.2 spec:
         - High confidence: push immediately
         - Medium confidence: show in pending list
@@ -97,22 +97,22 @@ def _confidence_to_level(confidence: float) -> ConfidenceLevel:
 
 class ApprovalDetector:
     """Dual-layer approval detection with confidence classification.
-    
+
     Layer 1: Gate rule-based filter (0 token)
     - Quickly eliminate spam/notification/routine emails
     - Only pass potential approval emails to Layer 2
-    
+
     Layer 2: LLM precision filter (~400 token)
     - Accurate classification of borderline cases
     - Distinguish direct/cc/notification/system
-    
+
     V5.2 additions:
     - Three-level confidence (high/medium/low)
     - withFallback integration for automatic degradation
     - Desensitization before LLM call
     - Approval detail extraction (approver, amount, deadline)
     """
-    
+
     def __init__(
         self,
         gate_classifier: Optional[GateClassifier] = None,
@@ -127,20 +127,20 @@ class ApprovalDetector:
             token_budget=token_budget or TokenBudget(),
         )
         self.fallback = fallback or get_fallback()
-    
+
     async def detect(self, email: Email, user_email: str = "") -> ApprovalDetection:
         """Detect if email is an approval request with confidence level.
-        
+
         Args:
             email: Email to analyze
-        
+
         Returns:
             Approval detection result
         """
         # Layer 1: Gate rule-based filter
         email_info = self._email_to_info(email)
         gate_result = self.gate.classify(email_info)
-        
+
         # Quick reject: spam emails are not approvals
         if gate_result.gate_class == GateClass.SPAM:
             return ApprovalDetection(
@@ -151,7 +151,7 @@ class ApprovalDetector:
                 gate_class=gate_result.gate_class,
                 reason="垃圾邮件，无需审批"
             )
-        
+
         # Auto-reply notifications
         if getattr(email, 'is_auto_reply', False):
             return ApprovalDetection(
@@ -162,24 +162,24 @@ class ApprovalDetector:
                 gate_class=gate_result.gate_class,
                 reason="自动回复通知"
             )
-        
+
         # Layer 2: LLM or rule-based precision filter
         approval_keywords = ["审批", "批准", "确认", "签字", "审核", "approve", "签核"]
         subject_lower = (email.subject or "").lower()
         content_lower = (email.text_body or "").lower()
-        
+
         needs_llm = any(kw in subject_lower or kw in content_lower for kw in approval_keywords)
-        
+
         if needs_llm:
             # Use Tier4 LLM for precise classification
             approval_result = await self.tier4.classify_approval(email, user_email=user_email)
-            
+
             approval_type = self._map_approval_type(approval_result)
             confidence_level = _confidence_to_level(approval_result.confidence)
-            
+
             # Extract approval details
             approver, requester, amount, deadline = self._extract_details(email, approval_result)
-            
+
             return ApprovalDetection(
                 is_approval=approval_result.is_approval,
                 approval_type=approval_type,
@@ -197,10 +197,10 @@ class ApprovalDetector:
         else:
             # Local rule-based classification (no LLM needed)
             approval_result = self.tier4._local_approval_classify(email, user_email=user_email)
-            
+
             approval_type = self._map_approval_type(approval_result)
             confidence_level = _confidence_to_level(approval_result.confidence)
-            
+
             return ApprovalDetection(
                 is_approval=approval_result.is_approval,
                 approval_type=approval_type,
@@ -211,13 +211,13 @@ class ApprovalDetector:
                 reason=approval_result.reason,
                 subject=email.subject or "",
             )
-    
+
     async def detect_batch(self, emails: List[Email]) -> List[ApprovalDetection]:
         """Batch detect approval emails.
-        
+
         Args:
             emails: List of emails to analyze
-            
+
         Returns:
             List of detection results
         """
@@ -226,7 +226,7 @@ class ApprovalDetector:
             result = await self.detect(email)
             results.append(result)
         return results
-    
+
     def _map_approval_type(self, approval_result: ApprovalResult) -> ApprovalType:
         """Map Tier4 ApprovalResult.approval_type to our enum."""
         type_map = {
@@ -237,35 +237,35 @@ class ApprovalDetector:
             "none": ApprovalType.NOTIFICATION,
         }
         return type_map.get(approval_result.approval_type, ApprovalType.NOTIFICATION)
-    
+
     def _extract_details(
-        self, 
-        email: Email, 
+        self,
+        email: Email,
         approval_result: ApprovalResult
     ) -> tuple:
         """Extract approval details from email.
-        
+
         Returns:
             (approver, requester, amount, deadline)
         """
         import re
-        
+
         approver = ""
         requester = ""
         amount = None
         deadline = None
-        
+
         content = email.text_body or ""
         subject = email.subject or ""
-        
+
         # Requester is typically the sender
         if email.from_addr:
             requester = str(email.from_addr)
-        
+
         # Approver is typically in "to" addresses
         if email.to_addrs:
             approver = str(email.to_addrs[0]) if email.to_addrs else ""
-        
+
         # Extract amount
         amount_patterns = [
             r'[¥￥$]\s*([\d,]+\.?\d*)',  # ¥50,000
@@ -283,7 +283,7 @@ class ApprovalDetector:
                     break
                 except ValueError:
                     pass
-        
+
         # Extract deadline
         deadline_patterns = [
             r'截止[日期]*[：:]\s*(\d{4}[-/年]\d{1,2}[-/月]\d{1,2}[日]?)',
@@ -295,9 +295,9 @@ class ApprovalDetector:
             if match:
                 deadline = match.group(1)
                 break
-        
+
         return approver, requester, amount, deadline
-    
+
     def _email_to_info(self, email: Email) -> EmailInfo:
         """Convert Email to EmailInfo for Gate classifier."""
         return EmailInfo(

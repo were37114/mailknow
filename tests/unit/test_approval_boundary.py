@@ -14,12 +14,13 @@ Tests edge cases from approval_samples.json:
 """
 
 import json
-import pytest
 from datetime import datetime
 from pathlib import Path
 
-from scenes.approval import ApprovalDetector, ApprovalType
+import pytest
+
 from core.wiring import Tier4Extractor
+from scenes.approval import ApprovalDetector, ApprovalType
 from sync.models import Email, EmailAddress
 
 
@@ -72,9 +73,9 @@ def test_cc_approval_low_confidence(tier4: Tier4Extractor):
         text_body="请审批合同，抄送知会",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is True
     assert result.approval_type == "cc"
     assert result.confidence < 0.8  # CC should have lower confidence
@@ -90,9 +91,9 @@ def test_completed_notification_not_approval(tier4: Tier4Extractor):
         text_body="您提交的合同审批已通过",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is False
     assert result.approval_type == "notification"
 
@@ -107,9 +108,9 @@ def test_system_forwarded_approval(tier4: Tier4Extractor):
         text_body="请审批采购申请单#12345",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is True
     assert result.approval_type == "direct"
 
@@ -124,9 +125,9 @@ def test_confirmation_not_approval(tier4: Tier4Extractor):
         text_body="确认明天的会议时间改为下午3点",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is False
     assert result.approval_type == "none"
 
@@ -141,9 +142,9 @@ def test_english_approval(tier4: Tier4Extractor):
         text_body="Hi, please review and approve the Q2 budget request attached.",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is True
     assert result.approval_type == "direct"
 
@@ -158,9 +159,9 @@ def test_urgent_approval(tier4: Tier4Extractor):
         text_body="服务器即将到期，请紧急审批采购申请",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is True
     assert result.approval_type == "direct"
 
@@ -175,9 +176,9 @@ def test_rejection_notification(tier4: Tier4Extractor):
         text_body="您的差旅申请审批未通过，原因：超出预算",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is False
     assert result.approval_type == "notification"
 
@@ -192,9 +193,9 @@ def test_implicit_approval_in_discussion(tier4: Tier4Extractor):
         text_body="新项目方案已整理完成，请审核确认",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is True
     assert result.approval_type == "direct"
 
@@ -209,9 +210,9 @@ def test_pure_discussion(tier4: Tier4Extractor):
         text_body="我觉得方案A更好，大家觉得呢？",
         date=datetime(2024, 1, 1)
     )
-    
+
     result = tier4._local_approval_classify(email)
-    
+
     assert result.is_approval is False
     assert result.approval_type == "none"
 
@@ -223,23 +224,23 @@ async def test_boundary_samples(detector: ApprovalDetector, samples: list):
     """Test all boundary samples from JSON."""
     if not samples:
         pytest.skip("No sample file found")
-    
+
     passed = 0
     failed = 0
-    
+
     for sample in samples:
         email = _sample_to_email(sample)
         expected = sample["expected"]
-        
+
         result = await detector.detect(email)
-        
+
         # Check is_approval
         if result.is_approval != expected["is_approval"]:
             failed += 1
             print(f"FAIL {sample['id']}: expected is_approval={expected['is_approval']}, got {result.is_approval}")
         else:
             passed += 1
-    
+
     # At least 70% should pass for MVP
     if samples:
         pass_rate = passed / len(samples)

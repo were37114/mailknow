@@ -1,19 +1,20 @@
 """Tests for EmailPipeline: new email → Gate → wiring → store."""
 
-import pytest
 import asyncio
 import tempfile
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from sync.models import Email, EmailAddress, EmailFlag
-from core.pipeline import EmailPipeline, PipelineResult, PipelineStats
-from core.gate.classifier import GateClassifier, EmailInfo
+import pytest
+
+from core.gate.classifier import EmailInfo, GateClassifier
 from core.gate.models import GateClass, GateResult
+from core.pipeline import EmailPipeline, PipelineResult, PipelineStats
 from core.wiring.tier1_extractor import Tier1Extractor
 from core.wiring.tier2_extractor import Tier2Extractor
 from db.pgpool import SQLitePool
+from sync.models import Email, EmailAddress, EmailFlag
 
 
 @pytest.fixture
@@ -135,7 +136,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=100,
         )
-        
+
         assert result.error is None
         assert result.gate_class in ("routine", "important")  # Depends on to_me rule
         assert result.gate_confidence > 0
@@ -150,7 +151,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=101,
         )
-        
+
         assert result.error is None
         assert result.gate_class == "urgent"
         assert result.gate_confidence > 0.5
@@ -164,7 +165,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=102,
         )
-        
+
         assert result.error is None
         assert result.gate_class == "spam"
 
@@ -177,7 +178,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=103,
         )
-        
+
         assert result.error is None
         # Should have extracted links from In-Reply-To and References
         assert result.links_extracted >= 2  # reply_to + references + sent_by + sent_to + cc_to
@@ -191,7 +192,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=200,
         )
-        
+
         conn = await db.get_connection()
         cursor = await conn.execute("SELECT COUNT(*) FROM pages WHERE type = 'email'")
         count = (await cursor.fetchone())[0]
@@ -206,7 +207,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=300,
         )
-        
+
         conn = await db.get_connection()
         cursor = await conn.execute("SELECT COUNT(*) FROM links")
         count = (await cursor.fetchone())[0]
@@ -221,7 +222,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=400,
         )
-        
+
         conn = await db.get_connection()
         cursor = await conn.execute("SELECT COUNT(*) FROM entities")
         count = (await cursor.fetchone())[0]
@@ -242,7 +243,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=500,
         )
-        
+
         conn = await db.get_connection()
         cursor = await conn.execute("SELECT COUNT(*) FROM pages WHERE type = 'email'")
         count = (await cursor.fetchone())[0]
@@ -257,7 +258,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=600,
         )
-        
+
         stats = pipeline.stats
         assert stats.total_processed == 1
         assert stats.total_time_ms > 0
@@ -276,14 +277,14 @@ class TestEmailPipeline:
             )
             for i in range(5)
         ]
-        
+
         results = await pipeline.process_batch(
             emails=emails,
             account_id="acc1",
             folder="INBOX",
             start_uid=700,
         )
-        
+
         assert len(results) == 5
         assert all(r.error is None for r in results)
         assert pipeline.stats.total_processed == 5
@@ -297,7 +298,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=800,
         )
-        
+
         assert pipeline.stats.total_processed == 1
         pipeline.reset_stats()
         assert pipeline.stats.total_processed == 0
@@ -311,7 +312,7 @@ class TestEmailPipeline:
             folder="INBOX",
             uid=900,
         )
-        
+
         conn = await db.get_connection()
         cursor = await conn.execute(
             "SELECT gate_class, gate_score FROM pages WHERE type = 'email' LIMIT 1"

@@ -1,14 +1,15 @@
 """Tests for GateRulesManager: hot-reload, CRUD, versioning."""
 
-import pytest
 import json
 import tempfile
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
 
-from core.gate.classifier import GateClassifier, EmailInfo
-from core.gate.rules_manager import GateRulesManager, RuleVersion, RuleChange
+import pytest
+
+from core.gate.classifier import EmailInfo, GateClassifier
 from core.gate.models import GateClass, GateResult
+from core.gate.rules_manager import GateRulesManager, RuleChange, RuleVersion
 
 
 @pytest.fixture
@@ -55,7 +56,7 @@ def rules_path():
             "priority_order": ["urgent", "spam", "notification", "routine", "important"]
         },
     }
-    
+
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as f:
         json.dump(rules, f, ensure_ascii=False, indent=2)
         return Path(f.name)
@@ -136,7 +137,7 @@ class TestGateRulesManager:
             "weight": 0.9,
         })
         assert result is True
-        
+
         spam_rules = manager.get_gate_rules("spam")
         assert len(spam_rules["conditions"]) == 2
         assert spam_rules["conditions"][1]["domains"] == ["spam.com"]
@@ -161,7 +162,7 @@ class TestGateRulesManager:
         new_condition = {"type": "subject_keywords", "keywords": ["紧急", "URGENT", "ASAP"], "weight": 1.2}
         result = manager.update_condition("urgent", 0, new_condition)
         assert result is True
-        
+
         urgent_rules = manager.get_gate_rules("urgent")
         assert urgent_rules["conditions"][0]["keywords"] == ["紧急", "URGENT", "ASAP"]
 
@@ -179,7 +180,7 @@ class TestGateRulesManager:
             "weight": 0.9,
         })
         assert len(manager.get_gate_rules("spam")["conditions"]) == 2
-        
+
         # Remove the added one
         result = manager.remove_condition("spam", 1)
         assert result is True
@@ -200,7 +201,7 @@ class TestGateRulesManager:
         """Test updating threshold with invalid value fails."""
         result = manager.update_threshold("spam", 1.5)
         assert result is False
-        
+
         result = manager.update_threshold("spam", -0.1)
         assert result is False
 
@@ -212,7 +213,7 @@ class TestGateRulesManager:
             "weight": 0.9,
         })
         manager.update_threshold("urgent", 0.8)
-        
+
         log = manager.change_log
         assert len(log) >= 2
         assert log[0]["action"] == "add"
@@ -224,7 +225,7 @@ class TestGateRulesManager:
         """Test saving a version."""
         version = manager.save_version("Test version")
         assert version == "1.0.1"
-        
+
         versions = manager.list_versions()
         assert len(versions) == 2
         assert versions[1]["version"] == "1.0.1"
@@ -239,7 +240,7 @@ class TestGateRulesManager:
         """Test rollback to a previous version."""
         # Save initial state
         initial_version = manager.save_version("Before changes")
-        
+
         # Make changes
         manager.add_condition("spam", {
             "type": "from_domains",
@@ -247,15 +248,15 @@ class TestGateRulesManager:
             "weight": 0.9,
         })
         manager.update_threshold("urgent", 0.9)
-        
+
         # Verify changes applied
         assert len(manager.get_gate_rules("spam")["conditions"]) == 2
         assert manager.get_gate_rules("urgent")["threshold"] == 0.9
-        
+
         # Rollback
         result = manager.rollback(initial_version)
         assert result is True
-        
+
         # Verify rollback
         assert len(manager.get_gate_rules("spam")["conditions"]) == 1
         assert manager.get_gate_rules("urgent")["threshold"] == 0.5
@@ -269,13 +270,13 @@ class TestGateRulesManager:
         """Test change notification callback."""
         changes = []
         manager.on_change(lambda rules: changes.append(True))
-        
+
         manager.add_condition("spam", {
             "type": "from_domains",
             "domains": ["spam.com"],
             "weight": 0.9,
         })
-        
+
         assert len(changes) == 1
 
     def test_classification_after_rule_change(self, manager, classifier):
@@ -285,18 +286,18 @@ class TestGateRulesManager:
             from_addr="test@spam.com",
             to_addrs=["me@company.com"],
         )
-        
+
         # Before: should be routine (no spam domain rule)
         result1 = classifier.classify(email)
         assert result1.gate_class != GateClass.SPAM
-        
+
         # Add spam domain rule
         manager.add_condition("spam", {
             "type": "from_domains",
             "domains": ["spam.com"],
             "weight": 0.9,
         })
-        
+
         # After: should be spam
         result2 = classifier.classify(email)
         assert result2.gate_class == GateClass.SPAM
@@ -311,20 +312,20 @@ class TestGateRulesManager:
         # Modify the file
         with open(rules_path, 'r', encoding='utf-8') as f:
             rules = json.load(f)
-        
+
         rules["rules"]["spam"]["conditions"].append({
             "type": "from_domains",
             "domains": ["newspam.com"],
             "weight": 0.8,
         })
-        
+
         with open(rules_path, 'w', encoding='utf-8') as f:
             json.dump(rules, f, ensure_ascii=False, indent=2)
-        
+
         # Check and reload
         result = manager.check_and_reload()
         assert result is True
-        
+
         # Verify new rule is loaded
         spam_rules = manager.get_gate_rules("spam")
         assert len(spam_rules["conditions"]) == 2

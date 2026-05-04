@@ -1,17 +1,18 @@
 """Tests for W9: Scene recommender + cold start + feedback."""
 
-import pytest
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
+import pytest
+
+from scenes.cold_start import STAGE_STRATEGIES, ColdStartManager
 from scenes.recommender import (
-    SceneRecommender,
-    SceneCard,
-    SceneType,
-    FeedbackType,
     ColdStartStage,
+    FeedbackType,
     RecommendationBoundary,
+    SceneCard,
+    SceneRecommender,
+    SceneType,
 )
-from scenes.cold_start import ColdStartManager, STAGE_STRATEGIES
 
 
 class TestSceneRecommender:

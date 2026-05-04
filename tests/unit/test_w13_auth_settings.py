@@ -1,9 +1,10 @@
 """Tests for W13: IPC auth + Integrity checker + NL→SQL integration."""
 
-import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
-from api.auth import IPCAuth, AuthConfig
+import pytest
+
+from api.auth import AuthConfig, IPCAuth
 
 
 class TestIPCAuth:
@@ -88,14 +89,14 @@ class TestIntegrityChecker:
 
     def test_integrity_report_model(self):
         """Test IntegrityReport data model."""
-        from db.integrity import IntegrityReport, IntegrityIssue, IntegrityIssueType
+        from db.integrity import IntegrityIssue, IntegrityIssueType, IntegrityReport
         report = IntegrityReport(total_pages=100, total_links=500, total_entities=50)
         assert report.total_pages == 100
         assert not report.has_critical
 
     def test_integrity_report_with_critical(self):
         """Report with critical issue."""
-        from db.integrity import IntegrityReport, IntegrityIssue, IntegrityIssueType
+        from db.integrity import IntegrityIssue, IntegrityIssueType, IntegrityReport
         report = IntegrityReport()
         report.issues.append(IntegrityIssue(
             issue_type=IntegrityIssueType.BROKEN_LINK_SOURCE,

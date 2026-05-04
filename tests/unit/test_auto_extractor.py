@@ -1,9 +1,10 @@
 """Tests for AutoExtractor: automatic entity creation from links."""
 
-import pytest
 import tempfile
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
+
+import pytest
 
 from core.wiring.auto_extractor import AutoExtractor, EntityCandidate, ExtractionResult
 from core.wiring.models import Link, LinkRelation, LinkTier
@@ -93,7 +94,7 @@ class TestAutoExtractor:
                 metadata={"name": "张三", "email": "zhangsan@company.com"},
             ),
         ]
-        
+
         result = await extractor.extract_from_links(links)
         assert result.entities_created >= 1
         assert result.errors == 0
@@ -106,7 +107,7 @@ class TestAutoExtractor:
             make_link("email:msg1@test.com", "person:bob@test.com", LinkRelation.SENT_TO),
             make_link("email:msg1@test.com", "person:charlie@test.com", LinkRelation.CC_TO),
         ]
-        
+
         result = await extractor.extract_from_links(links)
         assert result.entities_created == 3
 
@@ -116,10 +117,10 @@ class TestAutoExtractor:
         links = [
             make_link("email:msg1@test.com", "url:github.com", LinkRelation.RELATED_TO),
         ]
-        
+
         result = await extractor.extract_from_links(links)
         assert result.entities_created == 1
-        
+
         entity = await extractor.get_entity("url:github.com")
         assert entity is not None
         assert entity["type"] == "url"
@@ -130,7 +131,7 @@ class TestAutoExtractor:
         links = [
             make_link("email:msg1@test.com", "project:MailKnow", LinkRelation.BELONGS_TO),
         ]
-        
+
         result = await extractor.extract_from_links(links)
         assert result.entities_created == 1
 
@@ -145,10 +146,10 @@ class TestAutoExtractor:
                 metadata={"name": "Test User"},
             ),
         ]
-        
+
         result1 = await extractor.extract_from_links(links1)
         assert result1.entities_created == 1
-        
+
         # Second extraction with updated attributes
         links2 = [
             make_link(
@@ -158,11 +159,11 @@ class TestAutoExtractor:
                 metadata={"department": "Engineering"},
             ),
         ]
-        
+
         result2 = await extractor.extract_from_links(links2)
         assert result2.entities_updated == 1
         assert result2.entities_created == 0
-        
+
         # Verify merged attributes
         entity = await extractor.get_entity("person:test@company.com")
         assert entity["attributes"]["department"] == "Engineering"
@@ -175,7 +176,7 @@ class TestAutoExtractor:
             make_link("email:msg1@test.com", "person:alice@company.com", LinkRelation.SENT_BY),
             make_link("email:msg1@test.com", "person:alice@company.com", LinkRelation.SENT_TO),
         ]
-        
+
         result = await extractor.extract_from_links(links)
         # Should only create 1 unique entity
         assert result.entities_created == 1
@@ -191,9 +192,9 @@ class TestAutoExtractor:
                 metadata={"name": "Find Me"},
             ),
         ]
-        
+
         await extractor.extract_from_links(links)
-        
+
         entity = await extractor.get_entity("person:findme@test.com")
         assert entity is not None
         assert entity["name"] == "findme@test.com"
@@ -213,12 +214,12 @@ class TestAutoExtractor:
             make_link("email:msg1@test.com", "person:bob@test.com", LinkRelation.SENT_TO),
             make_link("email:msg1@test.com", "url:github.com", LinkRelation.RELATED_TO),
         ]
-        
+
         await extractor.extract_from_links(links)
-        
+
         persons = await extractor.search_entities(entity_type="person")
         assert len(persons) == 2
-        
+
         urls = await extractor.search_entities(entity_type="url")
         assert len(urls) == 1
 
@@ -229,9 +230,9 @@ class TestAutoExtractor:
             make_link("email:msg1@test.com", "person:alice@company.com", LinkRelation.SENT_BY),
             make_link("email:msg1@test.com", "person:bob@company.com", LinkRelation.SENT_TO),
         ]
-        
+
         await extractor.extract_from_links(links)
-        
+
         results = await extractor.search_entities(query="company")
         assert len(results) == 2
 
@@ -241,7 +242,7 @@ class TestAutoExtractor:
         links = [
             make_link("email:msg1@test.com", None, LinkRelation.REPLY_TO),
         ]
-        
+
         result = await extractor.extract_from_links(links)
         assert result.entities_created == 0
 
@@ -256,10 +257,10 @@ class TestAutoExtractor:
                 tier=LinkTier.TIER_2,
             ),
         ]
-        
+
         result = await extractor.extract_from_links(links)
         assert result.entities_created == 1
-        
+
         entity = await extractor.get_entity("person:mentioned:张三")
         assert entity is not None
         assert entity["name"] == "张三"

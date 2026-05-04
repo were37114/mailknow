@@ -14,11 +14,11 @@ Design principles:
 - Configurable per-rule enable/disable
 """
 
-import re
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+import re
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -57,18 +57,18 @@ class DesensitizeResult:
 
 class DesensitizeEngine:
     """Data desensitization engine.
-    
+
     Usage:
         engine = DesensitizeEngine()
         result = engine.desensitize("张三的手机号是13812345678")
         # result.sanitized = "张*的手机号是138****5678"
         # result.replacements = [{original: "张三", sanitized: "张*", type: "person_name"}, ...]
-        
+
         # Restore (using mapping)
         restored = engine.restore(result.sanitized, result.replacements)
         # restored == "张三的手机号是13812345678"
     """
-    
+
     # Chinese name patterns (2-4 characters, common surnames)
     # Covers top 200+ Chinese surnames (covering 96%+ of population)
     COMMON_SURNAMES = (
@@ -86,7 +86,7 @@ class DesensitizeEngine:
         "欧殳沃利蔚越夔隆师巩厍聂晁勾敖融冷訾辛阚那简饶空曾毋沙乜养鞠须丰巢"
         "关蒯相查后荆红游竺权逯盖益桓公"
     )
-    
+
     # Characters very unlikely to appear in Chinese given names
     # Used to filter false positives like "安排" (安+排), "关于" (关+于)
     NON_NAME_CHARS = frozenset(
@@ -105,18 +105,18 @@ class DesensitizeEngine:
         # Aspect markers / negatives
         '得地着过不没'
     )
-    
+
     # Characters that commonly precede person names in email context
     NAME_PREFIX_CHARS = frozenset('：致请给和与向对被让把叫称由收发告转约代托帮送交')
-    
+
     def __init__(self, rules: Optional[List[DesensitizeRule]] = None):
         """Initialize desensitization engine.
-        
+
         Args:
             rules: Custom rules (default: all 6 types enabled)
         """
         self.rules = rules or self._default_rules()
-    
+
     def _default_rules(self) -> List[DesensitizeRule]:
         """Create default desensitization rules."""
         return [
@@ -182,51 +182,51 @@ class DesensitizeEngine:
                 description="人名脱敏",
             ),
         ]
-    
+
     def desensitize(self, text: str) -> DesensitizeResult:
         """Desensitize text by replacing sensitive information.
-        
+
         Args:
             text: Input text
-            
+
         Returns:
             DesensitizeResult with sanitized text and replacement mapping
         """
         if not text:
             return DesensitizeResult(original=text, sanitized=text, replacements=[])
-        
+
         sanitized = text
         replacements = []
-        
+
         for rule in self.rules:
             if not rule.enabled:
                 continue
-            
+
             try:
                 sanitized, rule_replacements = self._apply_rule(sanitized, rule)
                 replacements.extend(rule_replacements)
             except Exception as e:
                 logger.warning(f"Rule {rule.type.value} failed: {e}")
-        
+
         return DesensitizeResult(
             original=text,
             sanitized=sanitized,
             replacements=replacements,
         )
-    
+
     def _is_valid_person_name(self, given_name: str, start: int, text: str) -> bool:
         """Validate if a matched pattern is likely a real person name.
-        
+
         Filters out false positives like:
         - "安排" (安+排) where 安 is a surname but 排 is not a name char
         - "关于" (关+于) where 关 is a surname but 于 is a particle
         - "经理" after 张 etc.
-        
+
         Args:
             given_name: The name part after surname (1-2 chars)
             start: Start position of the match in text
             text: The full text being processed
-            
+
         Returns:
             True if this looks like a real person name
         """
@@ -242,7 +242,7 @@ class DesensitizeEngine:
             if '\u4e00' <= prev_char <= '\u9fa5':
                 if prev_char not in self.NAME_PREFIX_CHARS:
                     return False
-        
+
         # For 2-char given names, both chars must not be in exclusion list
         # For 1-char given names, check if it's a common non-name word
         if len(given_name) == 2:
@@ -251,24 +251,24 @@ class DesensitizeEngine:
         elif len(given_name) == 1:
             if given_name in self.NON_NAME_CHARS:
                 return False
-        
+
         return True
-    
+
     def _apply_rule(
-        self, 
-        text: str, 
+        self,
+        text: str,
         rule: DesensitizeRule
     ) -> Tuple[str, List[Dict[str, str]]]:
         """Apply a single desensitization rule.
-        
+
         Returns:
             Tuple of (sanitized_text, replacements)
         """
         replacements = []
-        
+
         def replace_match(match):
             original = match.group(0)
-            
+
             # For person names, validate the match to avoid false positives
             # If a 2-char given name fails validation, try 1-char instead
             if rule.type == SensitiveType.PERSON_NAME:
@@ -290,7 +290,7 @@ class DesensitizeEngine:
                             # Return the remaining char + replacement
                             return sanitized + given_name[1]
                     return original
-            
+
             if rule.type == SensitiveType.PHONE:
                 # 13812345678 → 138****5678
                 sanitized = original[:3] + "****" + original[-4:]
@@ -309,25 +309,25 @@ class DesensitizeEngine:
                 sanitized = match.group(1) + "*"
             else:
                 sanitized = rule.replacement
-            
+
             replacements.append({
                 "original": original,
                 "sanitized": sanitized,
                 "type": rule.type.value,
             })
-            
+
             return sanitized
-        
+
         result = rule.pattern.sub(replace_match, text)
         return result, replacements
-    
+
     def restore(self, text: str, replacements: List[Dict[str, str]]) -> str:
         """Restore desensitized text using replacement mapping.
-        
+
         Args:
             text: Sanitized text
             replacements: Replacement mapping from desensitize()
-            
+
         Returns:
             Restored text
         """
@@ -335,19 +335,19 @@ class DesensitizeEngine:
         for r in reversed(replacements):
             restored = restored.replace(r["sanitized"], r["original"], 1)
         return restored
-    
+
     def enable_rule(self, type_: SensitiveType) -> None:
         """Enable a desensitization rule."""
         for rule in self.rules:
             if rule.type == type_:
                 rule.enabled = True
-    
+
     def disable_rule(self, type_: SensitiveType) -> None:
         """Disable a desensitization rule."""
         for rule in self.rules:
             if rule.type == type_:
                 rule.enabled = False
-    
+
     def list_rules(self) -> List[Dict[str, Any]]:
         """List all rules with their status."""
         return [

@@ -1,15 +1,16 @@
 """Tests for TokenBudgetController V2: monthly budget + degradation + persistence."""
 
-import pytest
 import tempfile
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
+
+import pytest
 
 from llm.token_budget_v2 import (
-    TokenBudgetController,
     BudgetConfig,
-    UsageSummary,
     DegradationLevel,
+    TokenBudgetController,
+    UsageSummary,
 )
 
 
@@ -111,7 +112,7 @@ class TestTokenBudgetController:
     def test_record_usage(self, memory_controller):
         """Test recording usage updates counters."""
         memory_controller.record(100, 50, 0.001, "openai", "tier4_extract")
-        
+
         summary = memory_controller.get_summary()
         assert summary.daily_tokens == 150
         assert summary.daily_cost == 0.001
@@ -138,7 +139,7 @@ class TestTokenBudgetController:
         # 100% of 1000
         memory_controller.record(500, 500, 0.0, "openai", "test")
         assert memory_controller.degradation_level == DegradationLevel.PURE_GBRAIN
-        
+
         # LLM calls should be blocked
         assert memory_controller.check(100) is False
 
@@ -147,11 +148,11 @@ class TestTokenBudgetController:
         # Reach degraded level
         memory_controller.record(475, 475, 0.0, "openai", "test")
         assert memory_controller.degradation_level == DegradationLevel.DEGRADED
-        
+
         # Critical tasks allowed
         assert memory_controller.check(50, task_type="tier4_extract") is True
         assert memory_controller.check(50, task_type="approval") is True
-        
+
         # Non-critical blocked
         assert memory_controller.check(50, task_type="report") is False
         assert memory_controller.check(50, task_type="general") is False
@@ -168,7 +169,7 @@ class TestTokenBudgetController:
         # First instance
         c1 = TokenBudgetController(config=config, db_path=db_path)
         c1.record(100, 50, 0.001, "openai", "test_task")
-        
+
         # Second instance should load state
         c2 = TokenBudgetController(config=config, db_path=db_path)
         summary = c2.get_summary()
@@ -178,7 +179,7 @@ class TestTokenBudgetController:
     def test_get_summary(self, memory_controller):
         """Test summary contains all fields."""
         memory_controller.record(100, 50, 0.001, "openai", "test")
-        
+
         summary = memory_controller.get_summary()
         assert summary.daily_tokens == 150
         assert summary.daily_cost == 0.001
@@ -192,7 +193,7 @@ class TestTokenBudgetController:
         memory_controller.record(100, 50, 0.0, "openai", "tier4_extract")
         memory_controller.record(200, 100, 0.0, "openai", "report")
         memory_controller.record(50, 25, 0.0, "openai", "approval")
-        
+
         summary = memory_controller.get_summary()
         assert summary.by_task["tier4_extract"] == 150
         assert summary.by_task["report"] == 300
@@ -204,6 +205,6 @@ class TestTokenBudgetController:
         # Exhaust monthly budget (10000)
         for _ in range(20):
             memory_controller.record(250, 250, 0.0, "openai", "test")
-        
+
         # Should be at/past monthly limit
         assert memory_controller.check(100) is False

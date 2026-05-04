@@ -1,12 +1,12 @@
 """Sync engine robustness: reconnection, dedup, error handling."""
 
 import asyncio
-import logging
 import hashlib
+import logging
 import time
-from datetime import datetime, timezone
-from typing import Optional, List, Dict, Any, Callable, Awaitable
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from .config import AccountConfig, AccountStatus
 from .imap_sync import IMAPConnector, IMAPSyncError
@@ -24,14 +24,14 @@ class DedupResult:
 
 class ContentDeduplicator:
     """Content-hash based email deduplication.
-    
+
     Uses SHA-256 hash of (account_id + uid + message_id) for dedup.
     This prevents re-importing the same email on re-sync.
     """
 
     def __init__(self, max_cache_size: int = 10000):
         """Initialize deduplicator.
-        
+
         Args:
             max_cache_size: Max cached hashes (LRU)
         """
@@ -46,13 +46,13 @@ class ContentDeduplicator:
         extra: str = ""
     ) -> str:
         """Compute content hash for an email.
-        
+
         Args:
             account_id: Account identifier
             uid: IMAP UID
             message_id: Email Message-ID header
             extra: Additional data for hash
-            
+
         Returns:
             SHA-256 hex digest (first 32 chars)
         """
@@ -65,19 +65,19 @@ class ContentDeduplicator:
         existing_id: Optional[str] = None
     ) -> DedupResult:
         """Check if content hash is a duplicate.
-        
+
         Args:
             content_hash: Content hash to check
             existing_id: Existing page ID if found in DB
-            
+
         Returns:
             DedupResult indicating if duplicate
         """
         is_dup = content_hash in self._cache or existing_id is not None
-        
+
         if not is_dup:
             self._add_to_cache(content_hash)
-        
+
         return DedupResult(
             is_duplicate=is_dup,
             content_hash=content_hash,
@@ -90,7 +90,7 @@ class ContentDeduplicator:
             # Remove oldest entry (first key)
             oldest = next(iter(self._cache))
             del self._cache[oldest]
-        
+
         self._cache[content_hash] = now_iso()
 
     def clear_cache(self) -> None:
@@ -122,7 +122,7 @@ class RetryConfig:
 
 class ReconnectionManager:
     """Manages IMAP connection reconnection with exponential backoff.
-    
+
     Features:
     - Auto-reconnect on disconnect
     - Exponential backoff with jitter
@@ -136,7 +136,7 @@ class ReconnectionManager:
         retry_config: Optional[RetryConfig] = None,
     ):
         """Initialize reconnection manager.
-        
+
         Args:
             connector: IMAP connector to manage
             retry_config: Retry configuration
@@ -179,41 +179,41 @@ class ReconnectionManager:
         operation_name: str = "operation"
     ) -> Any:
         """Execute an async operation with retry logic.
-        
+
         Args:
             operation: Async callable to execute
             operation_name: Name for logging
-            
+
         Returns:
             Operation result
-            
+
         Raises:
             Exception: If all retries fail
         """
         last_error = None
-        
+
         for attempt in range(self.retry_config.max_retries + 1):
             try:
                 result = await operation()
-                
+
                 # Success - reset retry count
                 if self._retry_count > 0:
                     logger.info(f"{operation_name} recovered after {self._retry_count} retries")
                 self._retry_count = 0
                 self._is_healthy = True
                 return result
-                
+
             except Exception as e:
                 last_error = e
-                
+
                 if not self._is_retryable_error(e):
                     logger.error(f"{operation_name} non-retryable error: {e}")
                     self._is_healthy = False
                     raise
-                
+
                 self._retry_count += 1
                 self._is_healthy = False
-                
+
                 if attempt < self.retry_config.max_retries:
                     delay = self._calculate_delay()
                     logger.warning(
@@ -221,7 +221,7 @@ class ReconnectionManager:
                         f"retrying in {delay:.1f}s: {e}"
                     )
                     await asyncio.sleep(delay)
-                    
+
                     # Try to reconnect
                     try:
                         await self.connector.disconnect()
@@ -233,12 +233,12 @@ class ReconnectionManager:
                     logger.error(
                         f"{operation_name} failed after {self.retry_config.max_retries + 1} attempts: {e}"
                     )
-        
+
         raise last_error
 
     async def health_check(self) -> bool:
         """Perform connection health check.
-        
+
         Returns:
             True if connection is healthy
         """
@@ -246,12 +246,12 @@ class ReconnectionManager:
             if self.connector._client is None:
                 self._is_healthy = False
                 return False
-            
+
             # Try a NOOP command to check connection
             result, _ = await self.connector._client.noop()
             self._is_healthy = (result == "OK")
             return self._is_healthy
-            
+
         except Exception as e:
             logger.warning(f"Health check failed: {e}")
             self._is_healthy = False
@@ -278,11 +278,11 @@ class SyncErrorHandler:
 
     def __init__(self, max_errors: int = 1000):
         """Initialize error handler.
-        
+
         Args:
             max_errors: Max errors to keep in memory
         """
-        self._errors: List[ErrorRecord] = []
+        self._errors: list = []  # List[ErrorRecord]
         self._max_errors = max_errors
 
     def record_error(
@@ -293,25 +293,25 @@ class SyncErrorHandler:
         error: Exception
     ) -> ErrorRecord:
         """Record a sync error.
-        
+
         Args:
             account_id: Account ID
             folder: IMAP folder
             uid: Message UID
             error: Exception
-            
+
         Returns:
             ErrorRecord
         """
         error_type = type(error).__name__
         error_message = str(error)
-        
+
         # Determine if retryable
         retryable = any(
             kw in error_message.lower()
             for kw in ["timeout", "connection", "network", "temporarily"]
         )
-        
+
         record = self.ErrorRecord(
             account_id=account_id,
             folder=folder,
@@ -321,15 +321,15 @@ class SyncErrorHandler:
             timestamp=now_iso(),
             retryable=retryable
         )
-        
+
         self._errors.append(record)
-        
+
         # Trim if too many
         if len(self._errors) > self._max_errors:
             self._errors = self._errors[-self._max_errors:]
-        
+
         logger.warning(f"Sync error [{error_type}]: {error_message} (account={account_id}, uid={uid})")
-        
+
         return record
 
     def get_errors(
@@ -338,39 +338,39 @@ class SyncErrorHandler:
         retryable_only: bool = False
     ) -> List[ErrorRecord]:
         """Get recorded errors.
-        
+
         Args:
             account_id: Filter by account (optional)
             retryable_only: Only return retryable errors
-            
+
         Returns:
             List of error records
         """
         errors = self._errors
-        
+
         if account_id:
             errors = [e for e in errors if e.account_id == account_id]
-        
+
         if retryable_only:
             errors = [e for e in errors if e.retryable]
-        
+
         return errors
 
     def get_error_summary(self) -> Dict[str, Any]:
         """Get error summary statistics."""
         if not self._errors:
             return {"total": 0}
-        
+
         by_type: Dict[str, int] = {}
         by_account: Dict[str, int] = {}
         retryable_count = 0
-        
+
         for err in self._errors:
             by_type[err.error_type] = by_type.get(err.error_type, 0) + 1
             by_account[err.account_id] = by_account.get(err.account_id, 0) + 1
             if err.retryable:
                 retryable_count += 1
-        
+
         return {
             "total": len(self._errors),
             "retryable": retryable_count,
@@ -380,10 +380,10 @@ class SyncErrorHandler:
 
     def clear_errors(self, account_id: Optional[str] = None) -> int:
         """Clear error records.
-        
+
         Args:
             account_id: Clear for specific account (optional)
-            
+
         Returns:
             Number of cleared errors
         """
@@ -391,7 +391,7 @@ class SyncErrorHandler:
             count = len(self._errors)
             self._errors.clear()
             return count
-        
+
         original = len(self._errors)
         self._errors = [e for e in self._errors if e.account_id != account_id]
         return original - len(self._errors)

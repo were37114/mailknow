@@ -9,13 +9,13 @@ Provides automatic degradation when LLM is unavailable:
 import asyncio
 import logging
 import time
-from typing import Optional, Dict, Any, Callable, Awaitable, List
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any, Awaitable, Callable, Dict, List, Optional
 
-from .client import LLMClient, LLMResponse, LLMProvider, get_llm_client
-from .token_budget_v2 import TokenBudgetController, DegradationLevel
+from .client import LLMClient, LLMProvider, LLMResponse, get_llm_client
 from .desensitize import DesensitizeEngine
+from .token_budget_v2 import DegradationLevel, TokenBudgetController
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class FallbackResult:
     used_fallback: bool = False
     fallback_reason: str = ""
     was_desensitized: bool = False
-    
+
     @property
     def tokens_total(self) -> int:
         return self.tokens_in + self.tokens_out
@@ -63,10 +63,10 @@ LocalFallbackFn = Callable[[str, Optional[str]], str]
 
 class WithFallback:
     """LLM call wrapper with automatic retry and fallback.
-    
+
     Usage:
         wf = WithFallback(llm_client=client, budget=controller)
-        
+
         # With local fallback function
         result = await wf.call(
             prompt="Classify this email...",
@@ -74,12 +74,12 @@ class WithFallback:
             local_fallback=lambda prompt, system: '{"is_approval": false}',
             task_type="approval",
         )
-        
+
         # Check if fallback was used
         if result.used_fallback:
             logger.warning(f"LLM failed, used local fallback: {result.fallback_reason}")
     """
-    
+
     def __init__(
         self,
         llm_client: Optional[LLMClient] = None,
@@ -88,7 +88,7 @@ class WithFallback:
         desensitize_engine: Optional[DesensitizeEngine] = None,
     ):
         """Initialize with fallback wrapper.
-        
+
         Args:
             llm_client: LLM client (use global if None)
             budget: Token budget controller
@@ -99,13 +99,13 @@ class WithFallback:
         self.budget = budget or TokenBudgetController()
         self.config = config or FallbackConfig()
         self.desensitize = desensitize_engine or DesensitizeEngine()
-        
+
         # Stats
         self._total_calls = 0
         self._fallback_calls = 0
         self._retry_calls = 0
         self._desensitized_calls = 0
-    
+
     async def call(
         self,
         prompt: str,
@@ -118,7 +118,7 @@ class WithFallback:
         estimated_tokens: int = 500,
     ) -> FallbackResult:
         """Make an LLM call with fallback protection.
-        
+
         Args:
             prompt: User prompt
             system: System prompt
@@ -128,16 +128,16 @@ class WithFallback:
             max_tokens: Maximum output tokens
             json_mode: Force JSON output
             estimated_tokens: Estimated token count for budget check
-            
+
         Returns:
             FallbackResult with content and metadata
         """
         self._total_calls += 1
-        
+
         # Check if we should skip LLM entirely
         if self.config.strategy == FallbackStrategy.LOCAL_IMMEDIATELY:
             return self._use_local_fallback(prompt, system, local_fallback, "strategy=local_immediately")
-        
+
         # Check token budget
         if not self.budget.check(estimated_tokens, task_type):
             degradation = self.budget.degradation_level
@@ -145,12 +145,12 @@ class WithFallback:
                 return self._use_local_fallback(prompt, system, local_fallback, "budget_exceeded_pure_gbrain")
             elif degradation == DegradationLevel.DEGRADED and task_type not in ("tier4_extract", "approval"):
                 return self._use_local_fallback(prompt, system, local_fallback, f"budget_degraded_task={task_type}")
-        
+
         # Desensitize input if enabled
         actual_prompt = prompt
         was_desensitized = False
         desensitize_replacements = []
-        
+
         if self.config.desensitize_before_llm:
             result = self.desensitize.desensitize(prompt)
             if result.was_modified:
@@ -158,13 +158,13 @@ class WithFallback:
                 was_desensitized = True
                 desensitize_replacements = result.replacements
                 self._desensitized_calls += 1
-        
+
         # Try LLM with retries
         last_error = None
         for attempt in range(self.config.max_retries + 1):
             try:
                 start = time.time()
-                
+
                 response = await asyncio.wait_for(
                     self.llm.complete(
                         prompt=actual_prompt,
@@ -175,9 +175,9 @@ class WithFallback:
                     ),
                     timeout=self.config.timeout_per_retry,
                 )
-                
+
                 latency = (time.time() - start) * 1000
-                
+
                 # Record usage
                 self.budget.record(
                     tokens_in=response.tokens_in,
@@ -186,13 +186,13 @@ class WithFallback:
                     provider=response.provider.value,
                     task_type=task_type,
                 )
-                
+
                 # Restore desensitized content in response if needed
                 content = response.content
                 if was_desensitized and desensitize_replacements:
                     # The LLM response may contain sanitized values; restore them
                     content = self.desensitize.restore(content, desensitize_replacements)
-                
+
                 return FallbackResult(
                     content=content,
                     provider=response.provider,
@@ -204,14 +204,14 @@ class WithFallback:
                     used_fallback=False,
                     was_desensitized=was_desensitized,
                 )
-                
+
             except asyncio.TimeoutError:
                 last_error = "timeout"
                 logger.warning(f"LLM call timeout (attempt {attempt + 1}/{self.config.max_retries + 1})")
             except Exception as e:
                 last_error = str(e)
                 logger.warning(f"LLM call failed (attempt {attempt + 1}): {e}")
-            
+
             # Retry with exponential backoff (skip on last attempt)
             if attempt < self.config.max_retries:
                 delay = min(
@@ -220,10 +220,10 @@ class WithFallback:
                 )
                 self._retry_calls += 1
                 await asyncio.sleep(delay)
-        
+
         # All retries failed, use fallback
         return self._use_local_fallback(prompt, system, local_fallback, f"llm_failed: {last_error}")
-    
+
     def _use_local_fallback(
         self,
         prompt: str,
@@ -233,12 +233,12 @@ class WithFallback:
     ) -> FallbackResult:
         """Use local fallback function."""
         self._fallback_calls += 1
-        
+
         if local_fallback:
             content = local_fallback(prompt, system)
         else:
             content = self._default_local_fallback(prompt, system)
-        
+
         return FallbackResult(
             content=content,
             provider=LLMProvider.LOCAL,
@@ -246,7 +246,7 @@ class WithFallback:
             used_fallback=True,
             fallback_reason=reason,
         )
-    
+
     def _default_local_fallback(self, prompt: str, system: Optional[str]) -> str:
         """Default local fallback when no custom function provided."""
         # Pattern matching for common task types
@@ -260,7 +260,7 @@ class WithFallback:
             return '{"anomalies": []}'
         else:
             return '{"result": null, "reason": "local_fallback_no_llm"}'
-    
+
     @property
     def stats(self) -> Dict[str, Any]:
         """Get fallback statistics."""
